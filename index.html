@@ -1,10 +1,286 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-    <title>Group 15 Web Project</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>University of Ruhuna – News Portal</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Hello Test123</h1>
+
+<!-- ============ LOGIN SCREEN ============ -->
+<section id="loginScreen" class="login">
+  <button class="icon-btn theme-toggle login-theme" data-theme-toggle aria-label="Toggle theme">◐</button>
+  <div class="login-art">
+    <div class="orb o1"></div><div class="orb o2"></div>
+    <img src="logo.svg" alt="University of Ruhuna logo" class="login-logo">
+    <h1>University of Ruhuna</h1>
+    <p>News · Notices · Events · Announcements</p>
+  </div>
+  <form id="loginForm" class="login-card" autocomplete="off">
+    <h2>Welcome back</h2>
+    <p class="muted">Sign in to the University News Portal</p>
+    <label>Username
+      <input id="loginUser" type="text" placeholder="user or admin" required>
+    </label>
+    <label>Password
+      <input id="loginPass" type="password" placeholder="••••••••" required>
+    </label>
+    <div id="loginError" class="error" hidden>Incorrect username or password.</div>
+    <button class="btn" type="submit">Sign in</button>
+    <div class="hint">
+      <strong>Demo accounts</strong><br>
+      User: <code>user</code> / <code>user123</code><br>
+      Admin: <code>admin</code> / <code>password12345</code>
+    </div>
+  </form>
+</section>
+
+<!-- ============ MAIN APP ============ -->
+<div id="app" hidden>
+
+  <!-- Utility bar: profile top-left -->
+  <div class="topbar">
+    <div class="profile" id="profileWrap">
+      <button class="profile-btn" id="profileBtn" aria-haspopup="true">
+        <span class="avatar" id="avatar">U</span>
+        <span class="profile-name" id="profileName">User</span>
+        <span class="role-tag" id="roleTag">user</span>
+      </button>
+      <div class="profile-menu" id="profileMenu" hidden>
+        <div class="pm-head">
+          <span class="avatar big" id="avatar2">U</span>
+          <div><strong id="pmName"></strong><div class="muted" id="pmMail"></div></div>
+        </div>
+        <ul>
+          <li><span>Username</span><b id="pmUser"></b></li>
+          <li><span>Role</span><b id="pmRole"></b></li>
+          <li><span>Faculty</span><b id="pmFaculty"></b></li>
+          <li><span>Last login</span><b id="pmLogin"></b></li>
+        </ul>
+        <button class="btn small block" id="logoutBtn">Sign out</button>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span id="todayDate" class="date"></span>
+      <button class="icon-btn" data-theme-toggle aria-label="Toggle light/dark mode" title="Light / Dark">◐</button>
+    </div>
+  </div>
+
+  <!-- Masthead -->
+  <header class="masthead">
+    <a class="brand" href="#top" id="top">
+      <img src="logo.svg" alt="University of Ruhuna logo">
+      <span><small>UNIVERSITY OF</small><b>RUHUNA</b><em>News Portal</em></span>
+    </a>
+    <nav class="mainnav" id="mainnav">
+      <a href="#home" class="active">Home</a>
+      <a href="#news">News</a>
+      <a href="#notices">Notices</a>
+      <a href="#events">Events</a>
+      <a href="#faculties">Faculties</a>
+      <a href="#links">Quick Links</a>
+      <a href="#contact">Contact</a>
+      <a href="#admin" id="adminNav" class="admin-link" hidden>⚙ Admin Panel</a>
+    </nav>
+    <button class="menu-btn icon-btn" id="menuBtn" aria-label="Menu">☰</button>
+  </header>
+
+  <!-- Search / browse bar (orange-red bar from reference, in purple) -->
+  <section class="bar">
+    <div class="bar-col">
+      <h4>Search for news</h4>
+      <form id="searchForm" class="search">
+        <input id="searchInput" type="search" placeholder="Find University of Ruhuna news">
+        <button class="btn small" type="submit">Search</button>
+      </form>
+    </div>
+    <div class="bar-col">
+      <h4>Browse news stories</h4>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div class="bar-col">
+      <h4>Newsletter</h4>
+      <form id="newsletterForm" class="search">
+        <input type="email" placeholder="Your email" required>
+        <button class="btn small light" type="submit">Sign up ›</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Notice ticker -->
+  <div class="ticker"><span class="ticker-label">● LATEST NOTICES</span>
+    <div class="ticker-track"><div class="ticker-move" id="tickerMove"></div></div>
+  </div>
+
+  <main id="home">
+
+    <!-- HERO -->
+    <section class="hero container">
+      <article class="hero-main reveal" id="heroMain"></article>
+      <aside class="hero-side" id="heroSide"></aside>
+    </section>
+
+    <!-- NEWS -->
+    <section class="container section" id="news">
+      <div class="section-head">
+        <h2>Trending News</h2>
+        <span class="muted" id="newsCount"></span>
+      </div>
+      <div class="grid3" id="newsGrid"></div>
+      <p id="noResults" class="muted center" hidden>No stories match your search.</p>
+    </section>
+
+    <!-- NOTICES + EVENTS -->
+    <section class="container two-col section">
+      <div id="notices">
+        <div class="section-head"><h2>Notice Board</h2></div>
+        <div id="noticeList" class="notice-list"></div>
+      </div>
+      <div id="events">
+        <div class="section-head"><h2>Upcoming Events</h2></div>
+        <div id="eventList" class="event-list"></div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="container section">
+      <div class="stats reveal">
+        <div><b data-count="9">0</b><span>Faculties</span></div>
+        <div><b data-count="15000" data-plus="+">0</b><span>Students</span></div>
+        <div><b data-count="60" data-plus="+">0</b><span>Study Programmes</span></div>
+        <div><b data-count="1978">0</b><span>Established</span></div>
+      </div>
+    </section>
+
+    <!-- FACULTIES -->
+    <section class="container section" id="faculties">
+      <div class="section-head"><h2>Faculties</h2></div>
+      <div class="faculty-grid" id="facultyGrid"></div>
+    </section>
+
+    <!-- QUICK LINKS -->
+    <section class="container section" id="links">
+      <div class="section-head"><h2>Quick Links</h2></div>
+      <div class="links-grid" id="linksGrid"></div>
+    </section>
+
+    <!-- ADMIN PANEL -->
+    <section class="container section admin" id="admin" hidden>
+      <div class="section-head"><h2>⚙ Admin Panel</h2><span class="muted">Only visible to administrators</span></div>
+      <div class="tabs" id="adminTabs">
+        <button class="tab active" data-tab="dash">Dashboard</button>
+        <button class="tab" data-tab="anews">News</button>
+        <button class="tab" data-tab="anotices">Notices</button>
+        <button class="tab" data-tab="aevents">Events</button>
+        <button class="tab" data-tab="ausers">Users</button>
+        <button class="tab" data-tab="asettings">Settings</button>
+      </div>
+
+      <div class="tabpane" id="tab-dash">
+        <div class="stats small" id="adminStats"></div>
+        <h3>Recent activity</h3>
+        <ul class="activity" id="activityList"></ul>
+      </div>
+
+      <div class="tabpane" id="tab-anews" hidden>
+        <form class="admin-form" id="newsForm">
+          <h3>Publish a news story</h3>
+          <input name="title" placeholder="Headline" required>
+          <select name="cat" id="newsCat"></select>
+          <input name="img" placeholder="Image URL (optional)">
+          <textarea name="summary" placeholder="Short summary" rows="2" required></textarea>
+          <textarea name="body" placeholder="Full story" rows="4" required></textarea>
+          <button class="btn" type="submit">Publish news</button>
+        </form>
+        <div class="admin-list" id="adminNewsList"></div>
+      </div>
+
+      <div class="tabpane" id="tab-anotices" hidden>
+        <form class="admin-form" id="noticeForm">
+          <h3>Post a notice</h3>
+          <input name="title" placeholder="Notice title" required>
+          <select name="priority">
+            <option value="normal">Normal</option>
+            <option value="important">Important</option>
+            <option value="urgent">Urgent</option>
+          </select>
+          <textarea name="body" placeholder="Details" rows="3" required></textarea>
+          <button class="btn" type="submit">Post notice</button>
+        </form>
+        <div class="admin-list" id="adminNoticeList"></div>
+      </div>
+
+      <div class="tabpane" id="tab-aevents" hidden>
+        <form class="admin-form" id="eventForm">
+          <h3>Add an event</h3>
+          <input name="title" placeholder="Event title" required>
+          <input name="date" type="date" required>
+          <input name="time" placeholder="Time (e.g. 9:00 a.m. – 12:00 p.m.)" required>
+          <input name="venue" placeholder="Venue" required>
+          <button class="btn" type="submit">Add event</button>
+        </form>
+        <div class="admin-list" id="adminEventList"></div>
+      </div>
+
+      <div class="tabpane" id="tab-ausers" hidden>
+        <table class="table">
+          <thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Access</th></tr></thead>
+          <tbody>
+            <tr><td>Portal Admin</td><td>admin</td><td><span class="role-tag">admin</span></td><td>News, notices, events, users, settings</td></tr>
+            <tr><td>Student User</td><td>user</td><td><span class="role-tag">user</span></td><td>Read news, view own profile</td></tr>
+          </tbody>
+        </table>
+        <p class="muted">Demo accounts are stored in <code>script.js</code>. A real site would use a backend and hashed passwords.</p>
+      </div>
+
+      <div class="tabpane" id="tab-asettings" hidden>
+        <div class="admin-form">
+          <h3>Settings</h3>
+          <button class="btn" id="exportBtn">Download data (JSON)</button>
+          <button class="btn outline" id="resetBtn">Reset to sample data</button>
+          <p class="muted">Changes are saved in this browser (localStorage).</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer" id="contact">
+    <div class="container footer-grid">
+      <div>
+        <div class="brand light"><img src="logo.svg" alt=""><span><small>UNIVERSITY OF</small><b>RUHUNA</b></span></div>
+        <p>Wellamadama, Matara, Sri Lanka</p>
+        <p>Replace this contact info with the official details.</p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <a href="#news">News</a><a href="#notices">Notices</a><a href="#events">Events</a><a href="#faculties">Faculties</a>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p>✉ info@example.ac.lk</p>
+        <p>☎ +94 00 000 0000</p>
+      </div>
+      <div>
+        <h4>Follow</h4>
+        <div class="socials"><a href="#">f</a><a href="#">in</a><a href="#">▶</a><a href="#">✉</a></div>
+      </div>
+    </div>
+    <div class="copy">© <span id="year"></span> University of Ruhuna News Portal · Student project</div>
+  </footer>
+</div>
+
+<!-- Article modal -->
+<div class="modal" id="modal" hidden>
+  <div class="modal-box">
+    <button class="icon-btn close" id="modalClose" aria-label="Close">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="script.js"></script>
 </body>
 </html>
