@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Academic Calendar – University of Ruhuna</title>
+  <!-- Reuses the portal's colours/buttons; calendar-specific styles are in calendar.css -->
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="calendar.css">
+</head>
+<body>
+
+<!-- Shown when nobody is signed in on the main portal -->
+<section id="gate" class="gate" hidden>
+  <div class="gate-box">
+    <h2>📅 Academic Calendar</h2>
+    <p class="muted">Please sign in to the University News Portal first, then open the calendar from there.</p>
+    <a class="btn" href="../index.html">Go to sign in</a>
+  </div>
+</section>
+
+<div id="page" hidden>
+  <div class="topbar">
+    <a class="btn small outline back" href="../index.html">← Back to portal</a>
+    <div class="topbar-right">
+      <span class="who"><span class="avatar" id="avatar">U</span> <span id="whoName"></span> <span class="role-tag" id="roleTag"></span></span>
+      <button class="icon-btn" id="themeBtn" aria-label="Toggle light/dark mode" title="Light / Dark">◐</button>
+    </div>
+  </div>
+
+  <main class="container section" id="calendar">
+    <div class="section-head">
+      <h2>📅 Academic Calendar</h2>
+      <a class="btn small" id="calPdfBtn" href="#" target="_blank" rel="noopener" hidden>⬇ Official PDF</a>
+    </div>
+
+    <div class="cal-toolbar">
+      <div class="cal-nav">
+        <button class="icon-btn" id="calPrev" aria-label="Previous month">‹</button>
+        <h3 id="calTitle"></h3>
+        <button class="icon-btn" id="calNext" aria-label="Next month">›</button>
+        <button class="btn small outline" id="calToday" type="button">Today</button>
+      </div>
+      <div class="cal-filters" id="calFilters"></div>
+    </div>
+
+    <div class="cal-layout">
+      <div class="cal-wrap"><div class="cal-grid" id="calGrid"></div></div>
+      <aside class="cal-side">
+        <h4>This month</h4>
+        <div class="cal-list" id="calList"></div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- ADMIN ONLY -->
+  <section class="container section admin" id="manage" hidden>
+    <div class="section-head"><h2>⚙ Manage Academic Calendar</h2><span class="muted">Only visible to administrators</span></div>
+
+    <form class="admin-form" id="calForm">
+      <h3 id="calFormTitle">Add calendar entry</h3>
+      <input type="hidden" name="id">
+      <input name="title" placeholder="Title (e.g. Semester 2 begins)" required>
+      <select name="type" id="calType"></select>
+      <label class="field">Start date<input name="start" type="date" required></label>
+      <label class="field">End date (optional, for ranges)<input name="end" type="date"></label>
+      <textarea name="note" placeholder="Note (optional)" rows="2"></textarea>
+      <div class="form-actions">
+        <button class="btn" type="submit" id="calSubmit">Add entry</button>
+        <button class="btn outline" type="button" id="calCancel" hidden>Cancel edit</button>
+      </div>
+    </form>
+
+    <form class="admin-form" id="calPdfForm">
+      <h3>Official calendar PDF (optional)</h3>
+      <input name="url" placeholder="File name in this folder, e.g. calendar-2026.pdf, or a https:// link">
+      <button class="btn" type="submit">Save PDF link</button>
+      <p class="muted">Shows a download button above the calendar for all users. Leave empty to hide it.</p>
+    </form>
+
+    <div class="admin-list" id="adminCalList"></div>
+
+    <div class="form-actions bottom">
+      <button class="btn small" id="exportBtn" type="button">Download calendar (JSON)</button>
+      <button class="btn small outline" id="resetBtn" type="button">Reset to sample dates</button>
+    </div>
+    <p class="muted">Changes are saved in this browser (localStorage).</p>
+  </section>
+
+  <div class="copy">© <span id="year"></span> University of Ruhuna News Portal · Student project</div>
+</div>
+
+<div class="modal" id="modal" hidden>
+  <div class="modal-box">
+    <button class="icon-btn close" id="modalClose" aria-label="Close">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="calendar.js"></script>
+</body>
+</html>
