@@ -1,275 +1,837 @@
-/* ===== University of Ruhuna – News Portal (no backend, demo only) ===== */
+/* =======================================================================
+   script.js  —  THE CORE (the base of the site)
+   -----------------------------------------------------------------------
+   This file only runs the BASE: header, footer, Home page, light/dark
+   mode, colours, menu, sign-in and the admin panel shell.
 
-// Demo accounts (a real site must check these on a server)
-const USERS = [
-  { username: 'user',  password: 'user123',       role: 'user',  name: 'Student User', mail: 'user@example.ac.lk',  faculty: 'Faculty of Science' },
-  { username: 'admin', password: 'password12345', role: 'admin', name: 'Portal Admin', mail: 'admin@example.ac.lk', faculty: 'Administration' }
-];
+   News, Announcements and Contact are NOT in here. Each one is its own
+   file in the  modules/  folder and plugs itself in with Portal.register().
+   If a module file is missing or has an error, the rest of the site still
+   works — that page simply doesn't appear.
 
-const CATEGORIES = ['Academic', 'Research', 'Campus', 'Sports', 'Admissions', 'Events'];
-const ICONS = { Academic: '🎓', Research: '🔬', Campus: '🏛️', Sports: '🏅', Admissions: '📝', Events: '🎉' };
+   Sections (Ctrl+F):  [settings] [portal] [helpers] [saved data] [colours]
+   [light/dark mode] [smooth scroll] [pop-ups] [login] [admin panel]
+   [pages] [scroll tools] [start]
+   ======================================================================= */
 
-// Sample content – replace with real university news
-const DEFAULT_DB = {
-  news: [
-    { id: 1, title: 'New academic year orientation programme begins for first-year students', cat: 'Academic', date: '2026-11-10', img: '', summary: 'Orientation sessions introduce new students to faculties, libraries and student services.', body: 'The orientation programme helps new students settle in. Sessions cover academic regulations, library access, student welfare services and campus facilities. Students are encouraged to attend all sessions and meet their academic advisors.' },
-    { id: 2, title: 'Research symposium showcases student and staff innovations', cat: 'Research', date: '2026-11-08', img: '', summary: 'Posters and talks from across all faculties will be presented at the annual symposium.', body: 'The annual research symposium brings together undergraduates, postgraduates and academic staff to present their work. Best poster awards will be announced at the closing ceremony.' },
-    { id: 3, title: 'Library extends opening hours during examination period', cat: 'Campus', date: '2026-11-07', img: '', summary: 'Study spaces will remain open late for students preparing for end-of-semester exams.', body: 'To support students during examinations, the main library will open until late evening on weekdays. Quiet study zones and group rooms can be reserved at the front desk.' },
-    { id: 4, title: 'Inter-faculty sports meet: teams announced', cat: 'Sports', date: '2026-11-05', img: '', summary: 'Cricket, volleyball, football and athletics teams have been selected for the meet.', body: 'The inter-faculty sports meet will feature cricket, volleyball, football, netball and athletics. Practice sessions are held daily at the main grounds. Everyone is welcome to cheer for their faculty.' },
-    { id: 5, title: 'Applications open for postgraduate study programmes', cat: 'Admissions', date: '2026-11-03', img: '', summary: 'Prospective students can now submit applications for several postgraduate programmes.', body: 'Applications are open for selected postgraduate diplomas and masters programmes. Applicants should read the entry requirements carefully and upload all required documents before the closing date.' },
-    { id: 6, title: 'Cultural night celebrates music, dance and drama', cat: 'Events', date: '2026-11-01', img: '', summary: 'Student societies prepare a vibrant evening of performances open to the whole campus.', body: 'The cultural night will feature performances by student societies including music, traditional dance and drama. Entrance is free for students and staff.' },
-    { id: 7, title: 'Career fair connects graduates with employers', cat: 'Campus', date: '2026-10-28', img: '', summary: 'Companies from several industries will meet final-year students and recent graduates.', body: 'The career fair offers CV clinics, interview tips and direct conversations with employers. Students should bring printed CVs and dress smartly.' },
-    { id: 8, title: 'New e-learning platform guide published for lecturers and students', cat: 'Academic', date: '2026-10-25', img: '', summary: 'A short guide explains how to access course materials, quizzes and announcements online.', body: 'The guide covers logging in, finding course pages, submitting assignments and getting technical help. Training sessions will be held in the computer labs.' },
-    { id: 9, title: 'Environmental club launches campus tree-planting drive', cat: 'Events', date: '2026-10-20', img: '', summary: 'Volunteers are invited to help plant saplings around the university premises.', body: 'The environmental club is organising a tree-planting drive. Volunteers meet at the main gate on Saturday morning. Gloves and saplings will be provided.' }
-  ],
-  notices: [
-    { id: 1, title: 'Mid-semester examination timetable released', priority: 'important', date: '2026-11-12', body: 'The timetable is available on faculty notice boards. Report any clashes to your department office within three days.' },
-    { id: 2, title: 'Library fines waived this week', priority: 'normal', date: '2026-11-11', body: 'Students may return overdue books at the main library without fines until Friday.' },
-    { id: 3, title: 'Water supply interruption in hostels on Sunday', priority: 'urgent', date: '2026-11-10', body: 'Maintenance work will interrupt the supply from 8 a.m. to 2 p.m. Please store water in advance.' },
-    { id: 4, title: 'Scholarship applications close soon', priority: 'important', date: '2026-11-09', body: 'Submit completed scholarship forms to the Student Welfare Office before the closing date.' }
-  ],
-  events: [
-    { id: 1, title: 'Research Symposium', date: '2026-11-20', time: '9:00 a.m. – 4:00 p.m.', venue: 'Main Auditorium' },
-    { id: 2, title: 'Career Fair', date: '2026-11-24', time: '10:00 a.m. – 3:00 p.m.', venue: 'Student Centre' },
-    { id: 3, title: 'Inter-Faculty Sports Meet', date: '2026-11-28', time: '8:00 a.m. – 5:00 p.m.', venue: 'Main Grounds' },
-    { id: 4, title: 'Cultural Night', date: '2026-12-05', time: '6:00 p.m. – 9:30 p.m.', venue: 'Open-Air Theatre' }
-  ],
-  activity: []
+/* ---------- [settings] ---------- */
+const SETTINGS = {
+  adminEmail: "admin@ruh.ac.lk",
+  adminPassword: "Ruhuna@2026", // DEMO ONLY: this file is public on GitHub, so never reuse a real password
+  adminName: "Portal Admin",
+
+  /* University logo: save your file as  Resource/images/logo.png */
+  logo: "Resource/images/logo.png",
+
+  /* Default colours. Admin panel > Look can change them live (saved in that browser only). */
+  theme: { deep: "#3a1a0c", main: "#8a4b12", accent: "#f2b705" },
+
+  /* "light", "dark" or "auto" (follow the visitor's device). */
+  defaultMode: "light",
+
+  /* OPTIONAL FEATURES: true = on, false = removed.
+     (The "ticker" and "search" features live inside the modules that use them.) */
+  features: {
+    modeButton: true, // sun/moon button in the top bar
+    ticker: true, // scrolling strip of urgent notices (made by modules/announcements.js)
+    quickLinks: true, // 4 big buttons on Home
+    search: true, // search boxes (made by the News and Announcements modules)
+    scrollTools: true, // progress line on top + back-to-top button
+    footerMarquee: true, // scrolling text strip in the footer
+  },
 };
 
-const FACULTIES = [
-  ['🌾', 'Agriculture'], ['⚙️', 'Engineering'], ['🌊', 'Fisheries & Marine Sciences'],
-  ['📚', 'Humanities & Social Sciences'], ['💼', 'Management & Finance'], ['🩺', 'Medicine'],
-  ['🧪', 'Science'], ['🩻', 'Allied Health Sciences'], ['💻', 'Technology']
-];
-const LINKS = [
-  ['📅', 'Academic Calendar'], ['🕒', 'Exam Timetables'], ['📖', 'Library'], ['🖥️', 'E-Learning (LMS)'],
-  ['🎓', 'Admissions'], ['💰', 'Scholarships'], ['🏠', 'Hostel Services'], ['🧑‍💼', 'Career Guidance'],
-  ['📞', 'Help Desk'], ['📄', 'Downloads & Forms']
-];
-
-/* ===== Helpers ===== */
-const $ = (s, r = document) => r.querySelector(s);
-const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const fmtDate = d => new Date(d + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-function safeGet(store, key) { try { return store.getItem(key); } catch (e) { return null; } }
-function safeSet(store, key, val) { try { store.setItem(key, val); } catch (e) {} }
-
-let db = JSON.parse(safeGet(localStorage, 'ruhunaDB') || 'null') || JSON.parse(JSON.stringify(DEFAULT_DB));
-const saveDB = () => safeSet(localStorage, 'ruhunaDB', JSON.stringify(db));
-let session = JSON.parse(safeGet(sessionStorage, 'ruhunaSession') || 'null');
-let activeCat = 'All', searchTerm = '';
-
-function toast(msg) {
-  const t = $('#toast'); t.textContent = msg; t.hidden = false;
-  clearTimeout(toast.t); toast.t = setTimeout(() => t.hidden = true, 2400);
-}
-function logActivity(text) {
-  db.activity.unshift(new Date().toLocaleString('en-GB') + ' – ' + text);
-  db.activity = db.activity.slice(0, 12); saveDB();
+/* ---------- [portal] how modules plug in ----------
+   A module file calls  Portal.register({ ... })  once. See modules/_template.js.
+   Everything a module does is wrapped in safe(), so one broken module
+   can never stop the others (or the Home page) from working. */
+const Portal = {
+  modules: [],
+  current: "",
+  register(mod) {
+    if (!mod || !mod.name) return;
+    this.modules = this.modules.filter((m) => m.name !== mod.name);
+    this.modules.push(mod);
+    this.modules.sort((a, b) => (a.order || 50) - (b.order || 50));
+  },
+  has(name) {
+    return this.modules.some((m) => m.name === name);
+  },
+  // Redraws every module (called after anything changes, e.g. sign in / publish).
+  renderAll() {
+    this.modules.forEach((m) => m.render && safe(() => m.render(), m.name + ".render"));
+    $$(".rv").forEach((el) => io.observe(el));
+    $$("[data-admin-only]").forEach((el) => (el.hidden = !isAdmin()));
+  },
+};
+function safe(fn, label) {
+  try {
+    return fn();
+  } catch (err) {
+    console.error("[Portal] problem in " + label + ":", err);
+  }
 }
 
-/* ===== Theme (light / dark) ===== */
-function setTheme(t) { document.documentElement.setAttribute('data-theme', t); safeSet(localStorage, 'ruhunaTheme', t); }
-setTheme(safeGet(localStorage, 'ruhunaTheme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
-$$('[data-theme-toggle]').forEach(b => b.addEventListener('click', () =>
-  setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark')));
+/* ---------- [helpers] small tools used everywhere ---------- */
+const $ = (selector, root = document) => root.querySelector(selector); // find ONE element
+const $$ = (selector, root = document) => [...root.querySelectorAll(selector)]; // find ALL elements
 
-/* ===== Login / logout ===== */
-$('#loginForm').addEventListener('submit', e => {
-  e.preventDefault();
-  const u = $('#loginUser').value.trim().toLowerCase(), p = $('#loginPass').value;
-  const found = USERS.find(x => x.username === u && x.password === p);
-  if (!found) { $('#loginError').hidden = false; return; }
-  session = { username: found.username, time: new Date().toLocaleString('en-GB') };
-  safeSet(sessionStorage, 'ruhunaSession', JSON.stringify(session));
-  $('#loginError').hidden = true; $('#loginForm').reset();
-  startApp();
-});
-$('#logoutBtn').addEventListener('click', () => {
-  try { sessionStorage.removeItem('ruhunaSession'); } catch (e) {}
-  session = null; $('#app').hidden = true; $('#loginScreen').hidden = false; window.scrollTo(0, 0);
-});
+// Makes text safe to put inside HTML (stops people injecting code).
+const esc = (s) =>
+  String(s ?? "").replace(
+    /[&<>"']/g,
+    (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c],
+  );
 
-/* ===== Start app ===== */
-function startApp() {
-  const me = USERS.find(x => x.username === session.username);
-  if (!me) return;
-  $('#loginScreen').hidden = true; $('#app').hidden = false;
-  const initial = me.name[0];
-  $('#avatar').textContent = $('#avatar2').textContent = initial;
-  $('#profileName').textContent = $('#pmName').textContent = me.name;
-  $('#roleTag').textContent = $('#pmRole').textContent = me.role;
-  $('#pmMail').textContent = me.mail; $('#pmUser').textContent = me.username;
-  $('#pmFaculty').textContent = me.faculty; $('#pmLogin').textContent = session.time;
-  const isAdmin = me.role === 'admin';
-  $('#adminNav').hidden = !isAdmin; $('#admin').hidden = !isAdmin;
-  $('#todayDate').textContent = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
-  $('#year').textContent = new Date().getFullYear();
-  renderAll(); initReveal(); animateCounters();
+// "2026-11-13" -> "13 Nov 2026"
+const fmt = (d) =>
+  new Date(d + "T00:00:00").toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+
+// Saves small things in the visitor's browser (localStorage).
+const LS = {
+  get(key, fallback) {
+    try {
+      const v = localStorage.getItem(key);
+      return v === null ? fallback : JSON.parse(v);
+    } catch {
+      return fallback;
+    }
+  },
+  set(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch {}
+  },
+};
+
+// Removes duplicates (same id) and sorts newest first.
+const uniq = (list) => {
+  const seen = new Set();
+  return list.filter((x) => !seen.has(String(x.id)) && seen.add(String(x.id)));
+};
+const sortNew = (list) =>
+  [...list].sort(
+    (a, b) => String(b.date).localeCompare(String(a.date)) || Number(b.id) - Number(a.id),
+  );
+
+// "sports.jpg" -> "Resource/images/news/sports.jpg"  (full links are left alone)
+const photo = (file, folder) =>
+  !file ? "" : /^(https?:|data:|\/|Resource\/)/i.test(file) ? file : folder + file;
+const imgTag = (src) => (src ? `<img class="ph" src="${esc(src)}" alt="" loading="lazy">` : "");
+
+// Little icons
+const X_ICON =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+const CREST =
+  '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" style="fill:var(--brand-deep)"/><circle cx="32" cy="32" r="25" fill="none" style="stroke:var(--brand-light)" stroke-width="2"/><path d="M16 40c5-3 11-3 16 0 5-3 11-3 16 0V24c-5-3-11-3-16 0-5-3-11-3-16 0z" style="fill:var(--brand-light)"/><path d="M32 24v16" style="stroke:var(--brand-deep)" stroke-width="2"/><circle cx="32" cy="16" r="3" style="fill:var(--brand-light)"/></svg>';
+
+// Small message at the bottom of the screen.
+function toast(message) {
+  const t = $("#toast");
+  t.textContent = message;
+  t.classList.add("show");
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => t.classList.remove("show"), 2800);
 }
 
-/* ===== Profile dropdown ===== */
-$('#profileBtn').addEventListener('click', () => $('#profileMenu').hidden = !$('#profileMenu').hidden);
-document.addEventListener('click', e => { if (!$('#profileWrap').contains(e.target)) $('#profileMenu').hidden = true; });
-$('#menuBtn').addEventListener('click', () => $('#mainnav').classList.toggle('open'));
-$$('#mainnav a').forEach(a => a.addEventListener('click', () => {
-  $('#mainnav').classList.remove('open');
-  $$('#mainnav a').forEach(x => x.classList.remove('active')); a.classList.add('active');
-}));
+// Scrambles a password before saving it (demo level only).
+async function scramble(text) {
+  try {
+    const bytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+    return [...new Uint8Array(bytes)].map((b) => b.toString(16).padStart(2, "0")).join("");
+  } catch {
+    return btoa(unescape(encodeURIComponent(text)));
+  }
+}
 
-/* ===== Rendering ===== */
-function thumb(n, cls = '') {
-  return n.img
-    ? `<div class="thumb has-img ${cls}" style="background-image:url('${esc(n.img)}')"></div>`
-    : `<div class="thumb t-${n.cat} ${cls}">${ICONS[n.cat] || '📰'}</div>`;
-}
-function sortedNews() { return [...db.news].sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id); }
+// If a photo file is missing, hide it quietly (a coloured box shows instead).
+document.addEventListener(
+  "error",
+  (e) => {
+    const el = e.target;
+    if (el && el.tagName === "IMG") {
+      const thumb = el.closest(".athumb");
+      thumb ? thumb.remove() : (el.style.display = "none");
+    }
+  },
+  true,
+);
 
-function renderChips() {
-  $('#chips').innerHTML = ['All', ...CATEGORIES].map(c =>
-    `<button class="chip ${c === activeCat ? 'on' : ''}" data-cat="${c}">${c === 'All' ? 'All news' : c}</button>`).join('');
-  $$('#chips .chip').forEach(b => b.addEventListener('click', () => { activeCat = b.dataset.cat; renderNews(); renderChips(); }));
-}
-function renderTicker() {
-  const items = db.notices.map(n => `<span>${esc(n.title)}</span>`).join('');
-  $('#tickerMove').innerHTML = items + items;
-}
-function renderHero() {
-  const list = sortedNews();
-  const f = list[0];
-  if (!f) { $('#heroMain').innerHTML = '<div class="hero-text"><h2>No news yet</h2></div>'; $('#heroSide').innerHTML = ''; return; }
-  $('#heroMain').innerHTML = `<span class="tag">${esc(f.cat)}</span>${thumb(f)}
-    <div class="hero-text"><small>${fmtDate(f.date)}</small><h2>${esc(f.title)}</h2><p>${esc(f.summary)}</p></div>`;
-  $('#heroMain').onclick = () => openNews(f.id);
-  $('#heroSide').innerHTML = list.slice(1, 3).map(n => `
-    <article class="side-card" data-id="${n.id}"><span class="tag">${esc(n.cat)}</span>${thumb(n)}
-      <div class="txt"><small>${fmtDate(n.date)}</small><h3>${esc(n.title)}</h3></div></article>`).join('');
-  $$('#heroSide .side-card').forEach(c => c.addEventListener('click', () => openNews(+c.dataset.id)));
-}
-function renderNews() {
-  const term = searchTerm.toLowerCase();
-  const list = sortedNews().filter(n =>
-    (activeCat === 'All' || n.cat === activeCat) &&
-    (!term || (n.title + n.summary + n.body + n.cat).toLowerCase().includes(term)));
-  $('#newsCount').textContent = list.length + ' stories';
-  $('#noResults').hidden = list.length > 0;
-  $('#newsGrid').innerHTML = list.map(n => `
-    <article class="card reveal in" data-id="${n.id}">
-      <div class="thumbwrap">${thumb(n)}</div>
-      <div class="card-body">
-        <div class="card-meta"><span class="cat-label">${esc(n.cat)}</span><span>${fmtDate(n.date)}</span></div>
-        <h3>${esc(n.title)}</h3><p>${esc(n.summary)}</p>
-      </div></article>`).join('');
-  $$('#newsGrid .card').forEach(c => c.addEventListener('click', () => openNews(+c.dataset.id)));
-}
-function renderNotices() {
-  const order = { urgent: 0, important: 1, normal: 2 };
-  const list = [...db.notices].sort((a, b) => order[a.priority] - order[b.priority] || b.date.localeCompare(a.date));
-  $('#noticeList').innerHTML = list.map(n => `
-    <div class="notice ${n.priority}" data-id="${n.id}">
-      <h4>${esc(n.title)} <span class="badge ${n.priority}">${n.priority}</span></h4>
-      <p>${esc(n.body.length > 110 ? n.body.slice(0, 110) + '…' : n.body)}</p>
-      <small class="muted">${fmtDate(n.date)}</small></div>`).join('') || '<p class="muted">No notices.</p>';
-  $$('#noticeList .notice').forEach(c => c.addEventListener('click', () => openNotice(+c.dataset.id)));
-}
-function renderEvents() {
-  const list = [...db.events].sort((a, b) => a.date.localeCompare(b.date));
-  $('#eventList').innerHTML = list.map(e => {
-    const d = new Date(e.date + 'T00:00:00');
-    return `<div class="event"><div class="date-box"><small>${d.toLocaleDateString('en-GB', { month: 'short' })}</small><b>${d.getDate()}</b></div>
-      <div><h4>${esc(e.title)}</h4><p>${esc(e.time)}<br>📍 ${esc(e.venue)}</p></div></div>`;
-  }).join('') || '<p class="muted">No upcoming events.</p>';
-}
-function renderStatic() {
-  $('#facultyGrid').innerHTML = FACULTIES.map(f => `<div class="fac"><i>${f[0]}</i>${f[1]}</div>`).join('');
-  $('#linksGrid').innerHTML = LINKS.map(l => `<a class="lnk" href="#"><i>${l[0]}</i>${l[1]}</a>`).join('');
-  $('#newsCat').innerHTML = CATEGORIES.map(c => `<option>${c}</option>`).join('');
-}
-function renderAdmin() {
-  $('#adminStats').innerHTML = `<div><b>${db.news.length}</b><span>News</span></div><div><b>${db.notices.length}</b><span>Notices</span></div>
-    <div><b>${db.events.length}</b><span>Events</span></div><div><b>${USERS.length}</b><span>Users</span></div>`;
-  $('#activityList').innerHTML = db.activity.map(a => `<li>${esc(a)}</li>`).join('') || '<li>No activity yet.</li>';
-  const row = (type, id, t, s) => `<div class="row"><div><b>${esc(t)}</b><br><small>${esc(s)}</small></div><button class="del" data-type="${type}" data-id="${id}">Delete</button></div>`;
-  $('#adminNewsList').innerHTML = sortedNews().map(n => row('news', n.id, n.title, n.cat + ' · ' + fmtDate(n.date))).join('');
-  $('#adminNoticeList').innerHTML = db.notices.map(n => row('notices', n.id, n.title, n.priority + ' · ' + fmtDate(n.date))).join('');
-  $('#adminEventList').innerHTML = db.events.map(e => row('events', e.id, e.title, fmtDate(e.date) + ' · ' + e.venue)).join('');
-  $$('.del').forEach(b => b.addEventListener('click', () => {
-    const t = b.dataset.type, id = +b.dataset.id;
-    db[t] = db[t].filter(x => x.id !== id); logActivity('Deleted an item from ' + t); saveDB(); renderAll(); toast('Deleted');
-  }));
-}
-function renderAll() { renderChips(); renderTicker(); renderHero(); renderNews(); renderNotices(); renderEvents(); renderStatic(); renderAdmin(); }
-
-/* ===== Modal ===== */
-function openModal(html) { $('#modalBody').innerHTML = html; $('#modal').hidden = false; }
-function openNews(id) {
-  const n = db.news.find(x => x.id === id); if (!n) return;
-  openModal(`${thumb(n)}<div class="modal-inner"><span class="cat-label">${esc(n.cat)}</span> · <small class="muted">${fmtDate(n.date)}</small>
-    <h2>${esc(n.title)}</h2><p><b>${esc(n.summary)}</b></p><p>${esc(n.body)}</p></div>`);
-}
-function openNotice(id) {
-  const n = db.notices.find(x => x.id === id); if (!n) return;
-  openModal(`<div class="modal-inner"><span class="badge ${n.priority}">${n.priority}</span> <small class="muted">${fmtDate(n.date)}</small>
-    <h2>${esc(n.title)}</h2><p>${esc(n.body)}</p></div>`);
-}
-$('#modalClose').addEventListener('click', () => $('#modal').hidden = true);
-$('#modal').addEventListener('click', e => { if (e.target.id === 'modal') $('#modal').hidden = true; });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') $('#modal').hidden = true; });
-
-/* ===== Search / newsletter ===== */
-$('#searchForm').addEventListener('submit', e => { e.preventDefault(); searchTerm = $('#searchInput').value.trim(); renderNews(); $('#news').scrollIntoView(); });
-$('#searchInput').addEventListener('input', e => { searchTerm = e.target.value.trim(); renderNews(); });
-$('#newsletterForm').addEventListener('submit', e => { e.preventDefault(); e.target.reset(); toast('Thanks! You are subscribed (demo).'); });
-
-/* ===== Admin forms ===== */
-const nextId = arr => arr.reduce((m, x) => Math.max(m, x.id), 0) + 1;
-const today = () => new Date().toISOString().slice(0, 10);
-$$('#adminTabs .tab').forEach(t => t.addEventListener('click', () => {
-  $$('#adminTabs .tab').forEach(x => x.classList.remove('active')); t.classList.add('active');
-  $$('.tabpane').forEach(p => p.hidden = p.id !== 'tab-' + t.dataset.tab);
-}));
-$('#newsForm').addEventListener('submit', e => {
-  e.preventDefault(); const f = Object.fromEntries(new FormData(e.target));
-  db.news.push({ id: nextId(db.news), title: f.title, cat: f.cat, date: today(), img: f.img.trim(), summary: f.summary, body: f.body });
-  logActivity('Published news: ' + f.title); saveDB(); e.target.reset(); renderAll(); toast('News published');
-});
-$('#noticeForm').addEventListener('submit', e => {
-  e.preventDefault(); const f = Object.fromEntries(new FormData(e.target));
-  db.notices.push({ id: nextId(db.notices), title: f.title, priority: f.priority, date: today(), body: f.body });
-  logActivity('Posted notice: ' + f.title); saveDB(); e.target.reset(); renderAll(); toast('Notice posted');
-});
-$('#eventForm').addEventListener('submit', e => {
-  e.preventDefault(); const f = Object.fromEntries(new FormData(e.target));
-  db.events.push({ id: nextId(db.events), title: f.title, date: f.date, time: f.time, venue: f.venue });
-  logActivity('Added event: ' + f.title); saveDB(); e.target.reset(); renderAll(); toast('Event added');
-});
-$('#resetBtn').addEventListener('click', () => {
-  if (!confirm('Reset all news, notices and events to the sample data?')) return;
-  db = JSON.parse(JSON.stringify(DEFAULT_DB)); saveDB(); renderAll(); toast('Sample data restored');
-});
-$('#exportBtn').addEventListener('click', () => {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' }));
-  a.download = 'ruhuna-portal-data.json'; a.click();
-});
-
-/* ===== Animations ===== */
-function initReveal() {
-  const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { threshold: .15 });
-  $$('.reveal:not(.in)').forEach(el => io.observe(el));
-}
-function animateCounters() {
-  $$('[data-count]').forEach(el => {
-    const end = +el.dataset.count, plus = el.dataset.plus || '', start = performance.now();
-    (function tick(now) {
-      const p = Math.min((now - start) / 1400, 1);
-      el.textContent = Math.floor(end * (1 - Math.pow(1 - p, 3))).toLocaleString() + (p === 1 ? plus : '');
-      if (p < 1) requestAnimationFrame(tick);
-    })(start);
+// Puts the logo (with a small crest underneath as a backup) everywhere [data-logo] appears.
+function paintLogos() {
+  $$("[data-logo]").forEach((el) => {
+    if (el.dataset.done) return;
+    el.dataset.done = 1;
+    el.innerHTML = CREST + `<img src="${esc(SETTINGS.logo)}" alt="University of Ruhuna logo">`;
   });
 }
 
-/* ===== Boot ===== */
-if (session && USERS.find(x => x.username === session.username)) startApp();
+// true if this id is in a list of ids (used by modules for "hidden" items)
+const hasId = (list, id) => list.map(String).includes(String(id));
+
+/* ---------- [saved data] ----------
+   Only things the whole site shares are here. Each module keeps its own data. */
+const store = {
+  users: LS.get("ruh_users", []),
+  session: LS.get("ruh_session", null), // who is signed in
+  theme: LS.get("ruh_theme", null),
+};
+function persist() {
+  LS.set("ruh_users", store.users);
+  LS.set("ruh_session", store.session);
+}
+const isAdmin = () => store.session && store.session.role === "admin";
+
+/* ---------- [colours] ---------- */
+
+// Ready-made colour styles shown in Admin panel > Look.
+const PRESETS = [
+  { name: "Ruhuna", deep: "#3a1a0c", main: "#8a4b12", accent: "#f2b705" },
+  { name: "Ocean", deep: "#0f2f63", main: "#2563c9", accent: "#5790e6" },
+  { name: "Forest", deep: "#123524", main: "#2e7d4f", accent: "#c2e029" },
+  { name: "Maroon", deep: "#4a0f1c", main: "#9b2335", accent: "#f4a259" },
+  { name: "Violet", deep: "#24104a", main: "#6a3fc4", accent: "#f0a6ff" },
+  { name: "Teal", deep: "#0b3b3c", main: "#0f8b8d", accent: "#f2c14e" },
+];
+
+// Colour maths: hex "#8a4b12" <-> hue/saturation/lightness.
+function hexToHsl(hex) {
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+  let h = 0;
+  let s = 0;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+    else if (max === g) h = (b - r) / d + 2;
+    else h = (r - g) / d + 4;
+    h *= 60;
+  }
+  return { h, s, l };
+}
+function hslToHex(h, s, l) {
+  const a = s * Math.min(l, 1 - l);
+  const channel = (n) => {
+    const k = (n + h / 30) % 12;
+    const c = l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1));
+    return Math.round(255 * c)
+      .toString(16)
+      .padStart(2, "0");
+  };
+  return "#" + channel(0) + channel(8) + channel(4);
+}
+
+// From ONE colour the visitor picks, make the 3 theme colours:
+// a dark shade, the colour itself (not too light), and a bright accent.
+function paletteFrom(hex) {
+  const { h, s, l } = hexToHsl(hex);
+  return {
+    deep: hslToHex(h, Math.min(s, 0.75) * 0.9, 0.14),
+    main: hslToHex(h, s, Math.min(l, 0.42)),
+    accent: hslToHex((h + 18) % 360, Math.max(0.75, Math.min(s * 1.1, 0.95)), 0.58),
+  };
+}
+
+let theme = { ...SETTINGS.theme, ...(store.theme || {}) };
+function applyTheme(t) {
+  const style = document.documentElement.style;
+  style.setProperty("--brand-deep", t.deep);
+  style.setProperty("--brand", t.main);
+  style.setProperty("--brand-light", t.accent);
+}
+function setTheme(t) {
+  theme = t;
+  store.theme = t;
+  LS.set("ruh_theme", t);
+  applyTheme(t);
+}
+applyTheme(theme);
+
+/* ---------- [light/dark mode] ---------- */
+let mode = LS.get("ruh_mode", SETTINGS.defaultMode); // "light" | "dark" | "auto"
+const systemDark = matchMedia("(prefers-color-scheme: dark)");
+function applyMode() {
+  const actual = mode === "auto" ? (systemDark.matches ? "dark" : "light") : mode;
+  document.documentElement.dataset.mode = actual; // the CSS reacts to this
+}
+function setMode(m) {
+  mode = m;
+  LS.set("ruh_mode", m);
+  applyMode();
+}
+systemDark.addEventListener("change", () => mode === "auto" && applyMode());
+applyMode();
+// The sun/moon button flips between light and dark.
+$("#modeBtn")?.addEventListener("click", () =>
+  setMode(document.documentElement.dataset.mode === "dark" ? "light" : "dark"),
+);
+
+/* ---------- [smooth scroll] (optional, loads from the internet) ---------- */
+let lenis = null;
+function lock() {
+  document.documentElement.classList.add("locked");
+  lenis && lenis.stop();
+}
+function unlock() {
+  document.documentElement.classList.remove("locked");
+  lenis && lenis.start();
+}
+function scrollToTop(instant) {
+  if (lenis) lenis.scrollTo(0, { immediate: !!instant });
+  else scrollTo({ top: 0, behavior: instant ? "auto" : "smooth" });
+}
+(async () => {
+  try {
+    const { default: Lenis } = await import("https://cdn.jsdelivr.net/npm/lenis@1.1.18/+esm");
+    lenis = new Lenis({ smoothWheel: true });
+    const loop = (t) => {
+      lenis.raf(t);
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+    if (document.documentElement.classList.contains("locked")) lenis.stop();
+  } catch {} // no internet? normal scrolling is used instead
+})();
+
+// Sizes scale up on very wide screens.
+function fit() {
+  const reduction = ((1920 - innerWidth) / 1920) * 100 * 0.6666;
+  const size = 16 - (16 * reduction) / 100;
+  if (size > 16) document.documentElement.style.fontSize = size + "px";
+  else document.documentElement.style.removeProperty("font-size");
+}
+addEventListener("resize", fit);
+fit();
+
+/* ---------- [pop-ups] glass windows and the right side menu ---------- */
+function openM(id) {
+  $("#" + id).classList.add("open");
+  lock();
+}
+function closeM(id) {
+  $("#" + id).classList.remove("open");
+  if (!$(".modal.open") && !$("#drawer.open")) unlock();
+}
+function openDrawer() {
+  renderDrawerFoot();
+  $("#drawer").classList.add("open");
+  lock();
+}
+function closeDrawer() {
+  $("#drawer").classList.remove("open");
+  if (!$(".modal.open")) unlock();
+}
+document.addEventListener("click", (e) => {
+  const closer = e.target.closest("[data-close]");
+  if (closer) closer.dataset.close === "drawer" ? closeDrawer() : closeM(closer.dataset.close);
+});
+addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    $$(".modal.open").forEach((m) => closeM(m.id));
+    closeDrawer();
+  }
+});
+$("#burger").onclick = openDrawer;
+$("#dnav").addEventListener("click", (e) => {
+  if (e.target.closest("a")) closeDrawer();
+});
+
+/* ---------- [login] ---------- */
+function updateAuthUI() {
+  $$("[data-admin-only]").forEach((el) => (el.hidden = !isAdmin()));
+  renderDrawerFoot();
+}
+function logout() {
+  store.session = null;
+  persist();
+  updateAuthUI();
+  Portal.renderAll();
+  toast("You have signed out");
+}
+function renderDrawerFoot() {
+  const foot = $("#dfoot");
+  const user = store.session;
+  foot.innerHTML = user
+    ? `<div class="userbox"><span class="av">${esc(user.name[0] || "U").toUpperCase()}</span>
+         <span><b style="font-weight:500">${esc(user.name)}</b><small>${user.role === "admin" ? "Administrator" : "Member"}</small></span></div>
+       ${user.role === "admin" ? '<button class="pill gold" id="dPost" style="justify-content:center">Admin panel</button>' : ""}
+       <button class="pill outline" id="dOut" style="color:#fff;justify-content:center">Sign out</button>`
+    : `<p style="font-size:.8rem;opacity:.75;line-height:1.5">Everything is open to read. Sign in only if you are a portal administrator.</p>
+       <button class="pill gold" id="dIn" style="justify-content:center">Sign in</button>`;
+  const q = (id) => foot.querySelector(id);
+  if (q("#dIn"))
+    q("#dIn").onclick = () => {
+      closeDrawer();
+      openAuth("login");
+    };
+  if (q("#dOut"))
+    q("#dOut").onclick = () => {
+      closeDrawer();
+      logout();
+    };
+  if (q("#dPost"))
+    q("#dPost").onclick = () => {
+      closeDrawer();
+      openAdmin();
+    };
+}
+
+// The sign in / register window.
+function openAuth(authMode = "login") {
+  const panel = $("#pAuth");
+  const isLogin = authMode === "login";
+  panel.innerHTML = `
+    <div class="mhead">
+      <div><span class="eyebrow">${isLogin ? "Welcome back" : "Join the portal"}</span>
+      <h2>${isLogin ? "Sign in" : "Create account"}</h2></div>
+      <button class="xbtn" data-close="mAuth" aria-label="Close">${X_ICON}</button>
+    </div>
+    <div class="tabs">
+      <button class="${isLogin ? "on" : ""}" data-m="login">Sign in</button>
+      <button class="${!isLogin ? "on" : ""}" data-m="reg">Register</button>
+    </div>
+    <form class="f" id="fAuth" novalidate style="margin-top:1.25rem">
+      ${!isLogin ? '<div class="field"><label for="aName">Full name</label><input id="aName" placeholder="Nimal Perera" autocomplete="name"></div>' : ""}
+      <div class="field"><label for="aMail">Email</label><input id="aMail" type="email" placeholder="you@email.com" autocomplete="email"></div>
+      <div class="field"><label for="aPass">Password</label><input id="aPass" type="password" placeholder="••••••••" autocomplete="${isLogin ? "current-password" : "new-password"}"></div>
+      <div class="err" id="aErr"></div>
+      ${
+        isLogin
+          ? `<div class="hint">Demo admin: <b>${esc(SETTINGS.adminEmail)}</b> / <b>${esc(SETTINGS.adminPassword)}</b><br>Admins can add and remove content. Visitors don't need to sign in to read.</div>`
+          : '<div class="hint">Member accounts can sign in but cannot publish. Publishing is for administrators only.</div>'
+      }
+      <button class="pill solid" type="submit">${isLogin ? "Sign in" : "Create account"}</button>
+    </form>`;
+  $$(".tabs button", panel).forEach((b) => (b.onclick = () => openAuth(b.dataset.m)));
+
+  $("#fAuth").onsubmit = async (e) => {
+    e.preventDefault();
+    const email = $("#aMail").value.trim().toLowerCase();
+    const pass = $("#aPass").value;
+    const err = $("#aErr");
+    if (!/^\S+@\S+\.\S+$/.test(email))
+      return void (err.textContent = "Enter a valid email address.");
+    if (pass.length < 6) return void (err.textContent = "Password must be at least 6 characters.");
+
+    if (isLogin) {
+      if (email === SETTINGS.adminEmail.toLowerCase() && pass === SETTINGS.adminPassword) {
+        store.session = { name: SETTINGS.adminName, email, role: "admin" };
+      } else {
+        const hash = await scramble(pass);
+        const user = store.users.find((u) => u.email === email && u.h === hash);
+        if (!user) return void (err.textContent = "Incorrect email or password.");
+        store.session = { name: user.name, email: user.email, role: "member" };
+      }
+    } else {
+      const name = $("#aName").value.trim();
+      if (name.length < 2) return void (err.textContent = "Please enter your name.");
+      if (email === SETTINGS.adminEmail.toLowerCase() || store.users.some((u) => u.email === email))
+        return void (err.textContent = "That email is already registered.");
+      store.users.push({ name, email, h: await scramble(pass) });
+      store.session = { name, email, role: "member" };
+    }
+    persist();
+    closeM("mAuth");
+    updateAuthUI();
+    Portal.renderAll();
+    toast(
+      store.session.role === "admin"
+        ? "Signed in as administrator"
+        : "Welcome, " + store.session.name.split(" ")[0],
+    );
+  };
+  openM("mAuth");
+  setTimeout(() => ($("#aName") || $("#aMail")).focus(), 150);
+}
+
+/* ---------- [admin panel]  tabs: one per module that has an admin form | Look | Save ---------- */
+function adminTabs() {
+  const fromModules = Portal.modules
+    .filter((m) => m.admin)
+    .map((m) => [m.name, m.admin.label || m.label || m.name]);
+  return [...fromModules, ["look", "Look"], ["export", "Save"]];
+}
+function openAdmin(tab) {
+  if (!isAdmin()) return openAuth("login");
+  const panel = $("#pAdmin");
+  const tabs = adminTabs();
+  if (!tabs.some((t) => t[0] === tab)) tab = tabs[0][0];
+  const mod = Portal.modules.find((m) => m.name === tab && m.admin);
+
+  let body = "";
+  if (mod) body = safe(() => mod.admin.html(), tab + ".admin.html") || "";
+  else if (tab === "look") body = lookTabHtml();
+  else body = saveTabHtml();
+
+  panel.innerHTML = `
+    <div class="mhead">
+      <div><span class="eyebrow">Administrator</span><h2>Admin panel</h2></div>
+      <button class="xbtn" data-close="mAdmin" aria-label="Close">${X_ICON}</button>
+    </div>
+    <div class="tabs">${tabs.map((t) => `<button class="${tab === t[0] ? "on" : ""}" data-t="${t[0]}">${esc(t[1])}</button>`).join("")}</div>
+    ${body}`;
+  $$(".tabs button", panel).forEach((b) => (b.onclick = () => openAdmin(b.dataset.t)));
+
+  if (mod) safe(() => mod.admin.bind && mod.admin.bind(), tab + ".admin.bind");
+  if (tab === "look") bindLookTab();
+  if (tab === "export") bindSaveTab();
+  openM("mAdmin");
+}
+
+/* --- tab: Look (mode + colours) --- */
+function sameTheme(a, b) {
+  return a.deep === b.deep && a.main === b.main && a.accent === b.accent;
+}
+
+// A colour square the admin can tap. The real <input type="color"> is invisible and
+// sits on top of a plain coloured box, so it always looks neat in every browser.
+function swatchHtml(id, value) {
+  return `<span class="swatch" style="--c:${value}"><input type="color" id="${id}" value="${value}" aria-label="Choose colour"></span>`;
+}
+function setSwatch(id, value) {
+  const input = $("#" + id);
+  input.value = value;
+  input.parentElement.style.setProperty("--c", value);
+}
+
+function lookTabHtml() {
+  const modeBtn = (m, label) =>
+    `<button data-m="${m}" class="${mode === m ? "on" : ""}">${label}</button>`;
+  return `
+    <p class="lbl">Mode</p>
+    <div class="seg" id="modeSeg">
+      ${modeBtn("light", "☀ Light")}${modeBtn("dark", "☾ Dark")}${modeBtn("auto", "Auto")}
+    </div>
+
+    <p class="lbl">Colour style</p>
+    <div class="pgrid">
+      ${PRESETS.map(
+        (p, i) => `<button class="pcard ${sameTheme(p, theme) ? "on" : ""}" data-p="${i}">
+          <span class="sw" style="background:linear-gradient(135deg,${p.deep},${p.main} 55%,${p.accent})"></span>
+          <b>${p.name}</b><span class="tick">✓</span></button>`,
+      ).join("")}
+    </div>
+
+    <p class="lbl">Or pick your own colour</p>
+    <label class="custom">
+      ${swatchHtml("cOne", theme.main)}
+      <span class="ctext"><b>Any colour you like</b><small>The site makes the matching dark and bright shades for you.</small></span>
+      <code id="cHex">${theme.main}</code>
+    </label>
+
+    <p class="lbl">Preview</p>
+    <div class="preview"><div><b>University of Ruhuna</b><span>News Portal</span></div><i>Button</i></div>
+
+    <details class="adv">
+      <summary>Advanced: set the 3 colours one by one</summary>
+      <div class="crow"><span>Dark colour<small>hero, footer, menu</small></span>${swatchHtml("cDeep", theme.deep)}</div>
+      <div class="crow"><span>Main colour<small>buttons and highlights</small></span>${swatchHtml("cMain", theme.main)}</div>
+      <div class="crow"><span>Accent colour<small>bright touches</small></span>${swatchHtml("cAcc", theme.accent)}</div>
+    </details>
+
+    <details class="adv">
+      <summary>Make this the default for everyone</summary>
+      <p class="mini">Your choice is saved in <b>this browser only</b>. To make it the default for every visitor, copy these lines into <b>SETTINGS</b> in script.js:</p>
+      <textarea class="codebox" id="cCode" readonly rows="3"></textarea>
+    </details>
+
+    <button class="pill outline" id="cReset" style="color:#fff;margin-top:1.2rem">Reset to default colours</button>`;
+}
+
+function bindLookTab() {
+  const panel = $("#pAdmin");
+  const refreshCode = () => {
+    $("#cCode").value =
+      `theme: { deep: "${theme.deep}", main: "${theme.main}", accent: "${theme.accent}" },\ndefaultMode: "${mode}",`;
+  };
+  // Updates everything shown in the panel without rebuilding it.
+  const refreshLook = () => {
+    $$(".pcard", panel).forEach((c, i) => c.classList.toggle("on", sameTheme(PRESETS[i], theme)));
+    setSwatch("cOne", theme.main);
+    setSwatch("cDeep", theme.deep);
+    setSwatch("cMain", theme.main);
+    setSwatch("cAcc", theme.accent);
+    $("#cHex").textContent = theme.main;
+    refreshCode();
+  };
+  refreshCode();
+
+  // Light / Dark / Auto
+  $$("#modeSeg button").forEach((b) => {
+    b.onclick = () => {
+      setMode(b.dataset.m);
+      $$("#modeSeg button").forEach((x) => x.classList.toggle("on", x === b));
+      refreshCode();
+    };
+  });
+  // Ready-made styles
+  $$(".pcard", panel).forEach((card) => {
+    card.onclick = () => {
+      const p = PRESETS[+card.dataset.p];
+      setTheme({ deep: p.deep, main: p.main, accent: p.accent });
+      refreshLook();
+    };
+  });
+  // ONE colour -> the whole palette
+  $("#cOne").addEventListener("input", (e) => {
+    setTheme(paletteFrom(e.target.value));
+    $("#cOne").parentElement.style.setProperty("--c", e.target.value);
+    $$(".pcard", panel).forEach((c, i) => c.classList.toggle("on", sameTheme(PRESETS[i], theme)));
+    setSwatch("cDeep", theme.deep);
+    setSwatch("cMain", theme.main);
+    setSwatch("cAcc", theme.accent);
+    $("#cHex").textContent = e.target.value;
+    refreshCode();
+  });
+  // The three colours one by one
+  ["cDeep", "cMain", "cAcc"].forEach((id) =>
+    $("#" + id).addEventListener("input", (e) => {
+      e.target.parentElement.style.setProperty("--c", e.target.value);
+      setTheme({ deep: $("#cDeep").value, main: $("#cMain").value, accent: $("#cAcc").value });
+      $$(".pcard", panel).forEach((c, i) => c.classList.toggle("on", sameTheme(PRESETS[i], theme)));
+      setSwatch("cOne", theme.main);
+      $("#cHex").textContent = theme.main;
+      refreshCode();
+    }),
+  );
+  $("#cReset").onclick = () => {
+    LS.set("ruh_theme", null);
+    store.theme = null;
+    theme = { ...SETTINGS.theme };
+    applyTheme(theme);
+    openAdmin("look");
+    toast("Colours reset");
+  };
+}
+
+/* --- tab: Save (code to copy into the module files) --- */
+function saveTabHtml() {
+  return `<p class="mini" style="margin-top:1.1rem">Things you add here are saved in <b>this browser only</b>. To keep them for everyone, copy the code below and paste it where each comment says (inside the matching file in the <b>modules</b> folder), then commit to git.</p>
+    <textarea class="codebox" id="xCode" readonly rows="10">${esc(exportCode())}</textarea>
+    <button class="pill solid" id="xCopy" style="margin-top:1rem;justify-content:center;width:100%">Copy code</button>`;
+}
+function bindSaveTab() {
+  $("#xCopy").onclick = async () => {
+    const box = $("#xCode");
+    try {
+      await navigator.clipboard.writeText(box.value);
+    } catch {
+      box.select();
+      document.execCommand("copy");
+    }
+    toast("Code copied");
+  };
+}
+function exportCode() {
+  let out = "";
+  Portal.modules.forEach((m) => {
+    const code = m.admin && m.admin.code && safe(() => m.admin.code(), m.name + ".admin.code");
+    if (code) out += code + "\n\n";
+  });
+  out += `// ---- colours + mode: paste into SETTINGS in script.js ----\ntheme: { deep: "${theme.deep}", main: "${theme.main}", accent: "${theme.accent}" },\ndefaultMode: "${mode}",`;
+  return out;
+}
+
+/* ---------- [pages] switching pages without reloading ---------- */
+const view = $("#view");
+const TITLES = { home: "University of Ruhuna — News Portal" };
+let PAGES = ["home"]; // filled in by start() from the modules that loaded
+
+// Makes things with class "rv" slide up the first time they come into view.
+const io = new IntersectionObserver(
+  (entries) =>
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        e.target.classList.add("in");
+        io.unobserve(e.target);
+      }
+    }),
+  { threshold: 0.12, rootMargin: "0px 0px -6% 0px" },
+);
+
+// Splits a big title into words so they can slide in one by one.
+function prepWords(el) {
+  if (el.dataset.done) return;
+  el.dataset.done = 1;
+  el.innerHTML = el.textContent
+    .trim()
+    .split(/\s+/)
+    .map(
+      (w, i) =>
+        `<span class="w"><span style="transition-delay:${i * 140}ms">${esc(w)}</span></span>`,
+    )
+    .join(" ");
+}
+function playIntro(page) {
+  $$(".words,.tag", page).forEach((el) => el.classList.remove("go"));
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => $$(".words,.tag", page).forEach((el) => el.classList.add("go"))),
+    );
+}
+function resetReveals(scope) {
+  const els = $$(".rv,.rv-line", scope);
+  els.forEach((el) => {
+    io.unobserve(el);
+    el.classList.remove("in");
+  });
+  requestAnimationFrame(() => els.forEach((el) => io.observe(el)));
+}
+function activate(name, goTop) {
+  $$(".page").forEach((p) => p.classList.toggle("active", p.dataset.page === name));
+  $$("[data-nav]").forEach((a) => a.classList.toggle("on", a.dataset.nav === name));
+  document.title = TITLES[name] || TITLES.home;
+  const page = $(`.page[data-page="${name}"]`);
+  $$(".words", page).forEach(prepWords);
+  if (goTop) scrollToTop(true);
+  resetReveals(page);
+  resetReveals($("footer.ft"));
+  playIntro(page);
+  onScroll();
+}
+function route(force) {
+  let name = (location.hash.replace(/^#\/?/, "") || "home").split("?")[0];
+  if (!PAGES.includes(name)) name = "home"; // unknown or removed page -> Home
+  if (name === Portal.current && !force) return;
+  const same = name === Portal.current;
+  Portal.current = name;
+  view.classList.add("swap"); // fade out
+  setTimeout(
+    () => {
+      activate(name, !same);
+      view.classList.remove("swap"); // fade in
+    },
+    same ? 0 : 300,
+  );
+}
+addEventListener("hashchange", () => route());
+
+/* One simple window that any module can use to show a story or notice. */
+function openRead(item) {
+  $("#pRead").innerHTML = `
+    <div class="mhead">
+      <div><span class="eyebrow">${esc(item.eyebrow || "")}</span>
+      <h2 style="font-size:2rem">${esc(item.title)}</h2></div>
+      <button class="xbtn" data-close="mRead" aria-label="Close">${X_ICON}</button>
+    </div>
+    ${item.src ? `<div class="dimg">${imgTag(item.src)}</div>` : ""}
+    <p class="meta">${fmt(item.date)} · ${esc(item.author || "University of Ruhuna")}</p>
+    <div class="detail-body">${esc(item.text)}</div>`;
+  openM("mRead");
+}
+
+/* Clicks on admin buttons: data-act="admin-news", "admin-announcements", "admin-theme", ... */
+document.addEventListener("click", (e) => {
+  const act = e.target.closest("[data-act]");
+  if (!act) return;
+  e.preventDefault();
+  const name = act.dataset.act;
+  if (name === "admin-theme") openAdmin("look");
+  else if (name.startsWith("admin-")) openAdmin(name.slice(6));
+  else if (name === "top") scrollToTop();
+  else if (name === "signin") store.session ? logout() : openAuth("login");
+});
+
+/* ---------- [scroll tools] header glass, photo parallax, progress line, back-to-top ---------- */
+let ticking = false;
+function onScroll() {
+  $("#top").classList.toggle("stuck", scrollY > 40);
+
+  const plate = $(".page.active [data-parallax]"); // moves the big photo slower than the page
+  if (plate) {
+    const rect = plate.closest(".hero,.phero").getBoundingClientRect();
+    const progress = Math.min(1, Math.max(0, -rect.top / (rect.height || 1)));
+    plate.style.transform = `translateY(${progress * 12}%)`;
+  }
+
+  const bar = $("#progress"); // OPTIONAL: thin line on top
+  if (bar) {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    bar.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+  }
+  $("#toTop")?.classList.toggle("show", scrollY > 600); // OPTIONAL: back-to-top button
+  ticking = false;
+}
+addEventListener(
+  "scroll",
+  () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(onScroll);
+    }
+  },
+  { passive: true },
+);
+$("#toTop")?.addEventListener("click", () => scrollToTop());
+
+/* ---------- [start] everything begins here, after every module file has loaded ---------- */
+function navHtml(kind) {
+  const links = [["home", "Home"], ...Portal.modules.filter((m) => m.page && m.nav !== false).map((m) => [m.name, m.label || m.name])];
+  return links
+    .map(([name, label], i) =>
+      kind === "drawer"
+        ? `<a href="#/${name}" data-nav="${name}" style="transition-delay:${(0.12 + i * 0.07).toFixed(2)}s">${esc(label)} <small>${String(i + 1).padStart(2, "0")}</small></a>`
+        : kind === "footer"
+          ? `<li><a href="#/${name}">${esc(label)}</a></li>`
+          : `<a href="#/${name}" data-nav="${name}">${esc(label)}</a>`,
+    )
+    .join("");
+}
+
+function mountModule(m) {
+  if (m.page)
+    view.insertAdjacentHTML("beforeend", `<section class="page" data-page="${esc(m.name)}">${m.page}</section>`);
+  [].concat(m.home || []).forEach((h) => {
+    const slot = $(`[data-slot="${h.slot}"]`);
+    if (slot) slot.insertAdjacentHTML("beforeend", h.html);
+  });
+  if (m.title) TITLES[m.name] = m.title;
+  if (m.page) PAGES.push(m.name);
+}
+
+function start() {
+  history.scrollRestoration = "manual";
+  scrollTo(0, 0);
+
+  // 1. put every module's pages and Home sections into the page
+  Portal.modules = Portal.modules.filter((m) => safe(() => (mountModule(m), true), m.name + ".mount"));
+
+  // 2. menus made from the modules that really loaded
+  $("#topnav").innerHTML = navHtml("top");
+  $("#dnav").innerHTML = navHtml("drawer");
+  $("#fPortal").innerHTML = navHtml("footer");
+  $$("[data-needs]").forEach((el) => !Portal.has(el.dataset.needs) && el.remove());
+
+  // 3. optional features that are switched off
+  $$("[data-feature]").forEach((el) => {
+    if (!SETTINGS.features[el.dataset.feature]) el.remove();
+  });
+
+  // 4. footer scrolling text: repeat the phrases until the strip is wider than the screen
+  $$(".mq-track").forEach((track) => {
+    const set = track.firstElementChild;
+    let sets = 1;
+    while (track.scrollWidth < innerWidth * 2 && sets < 16) {
+      track.append(set.cloneNode(true));
+      sets++;
+    }
+    if (sets % 2) track.append(set.cloneNode(true)); // the loop needs an even number of copies
+  });
+
+  // 5. modules wire up their buttons, then everything is drawn
+  Portal.modules.forEach((m) => m.init && safe(() => m.init(), m.name + ".init"));
+  paintLogos();
+  updateAuthUI();
+  Portal.renderAll();
+  if (!location.hash) history.replaceState(null, "", "#/home");
+  route(true);
+}
+document.addEventListener("DOMContentLoaded", start);
