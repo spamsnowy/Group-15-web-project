@@ -23,6 +23,10 @@
   EDIT THE TIMETABLE:  scroll to the bottom, find  [timetable data].
   Each line is one lecture or one exam.
 
+  ADMINS: sign in as administrator and an "Add lecture / Add exam" bar
+  appears above the filters. Entries added there (and any deletions) are
+  saved in THIS browser only (localStorage: ruh_tt_custom, ruh_tt_hidden).
+
   Link to it from index.html: change the "Timetables" quick link to
   href="timetables.html" (and remove target="_blank").
 =======================================================================
@@ -62,6 +66,13 @@
   <!-- ---------- FILTERS + LIST ---------- -->
   <section class="s pad" id="ttPage">
     <div class="rv"><span class="eyebrow">Find yours</span><h2 class="t">Your timetable,<br>one place</h2></div>
+
+    <!-- ADMIN ONLY: shown after signing in as administrator (see render()) -->
+    <div class="adminbar" id="tAdmin" style="display:none">
+      <b>Administrator tools</b><span class="sp"></span>
+      <button class="pill solid" type="button" data-add="lecture">+ Add lecture</button>
+      <button class="pill gold" type="button" data-add="exam">+ Add exam</button>
+    </div>
 
     <label class="search rv" data-feature="search">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
@@ -156,13 +167,13 @@ const SITE_LINKS = [
 ];
 
 /* ---------- [timetable data] EDIT HERE ---------- */
-const FACULTIES = ["Agriculture", "Engineering", "Fisheries & Marine Sciences", "Humanities & Social Sciences"];
-const SHORT = ["Agriculture", "Engineering", "Fisheries", "Humanities"]; // button labels, same order
+const FACULTIES = ["Agriculture", "Engineering", "Fisheries & Marine Sciences", "Humanities & Social Sciences", "Medicine", "Science"];
+const SHORT = ["Agriculture", "Engineering", "Fisheries", "Humanities", "Medicine", "Science"]; // button labels, same order
 const DAYS = ["", "Mon", "Tue", "Wed", "Thu", "Fri"];
 
-// One lecture per line:  L(day 1-5, start, end, code, title, kind, room, lecturer, faculty 0-3, year)
+// One lecture per line:  L(day 1-5, start, end, code, title, kind, room, lecturer, faculty 0-5, year)
 // kind: "Lecture", "Practical" or "Tutorial".  Faculty numbers follow the FACULTIES list above.
-const L = (day, start, end, code, title, kind, room, who, fac, yr) => ({ day, start, end, code, title, kind, room, who, fac, yr });
+const L = (day, start, end, code, title, kind, room, who, fac, yr) => ({ day, start, end, code, title, kind, room, who, fac, yr, cover: "" });
 const LECTURES = [
   L(1, "08:00", "10:00", "AGR 1103", "Crop Science Basics", "Lecture", "Hall A2", "Dr. S. Fernando", 0, 1),
   L(1, "10:30", "12:30", "ENG 2201", "Engineering Mathematics II", "Lecture", "Lecture Hall 3", "Prof. K. Silva", 1, 2),
@@ -181,8 +192,8 @@ const LECTURES = [
   L(5, "13:00", "15:00", "ENG 2105", "Thermodynamics", "Lecture", "Lecture Hall 3", "Dr. R. Ekanayake", 1, 2),
 ];
 
-// One exam per line:  E("YYYY-MM-DD", start, end, code, title, venue, faculty 0-3, year)
-const E = (date, start, end, code, title, room, fac, yr) => ({ date, start, end, code, title, room, fac, yr, who: "" });
+// One exam per line:  E("YYYY-MM-DD", start, end, code, title, venue, faculty 0-5, year)
+const E = (date, start, end, code, title, room, fac, yr) => ({ date, start, end, code, title, room, fac, yr, who: "", cover: "" });
 const EXAMS = [
   E("2026-11-23", "09:00", "12:00", "ENG 2201", "Engineering Mathematics II", "Main Exam Hall", 1, 2),
   E("2026-11-25", "09:00", "11:00", "HSS 1201", "Introduction to Sociology", "Arts Theatre", 3, 1),
@@ -192,6 +203,25 @@ const EXAMS = [
   E("2026-12-10", "13:00", "15:00", "HSS 3102", "Research Methods", "Arts Theatre", 3, 3),
   E("2026-12-14", "09:00", "12:00", "AGR 3201", "Animal Nutrition", "Hall A1", 0, 3),
 ];
+
+/* ---------- [saved entries] built-in lines above + what the admin adds in the browser ----------
+   Admin-added entries have ids starting "c-". Built-in lines get "s-l0", "s-e0"... and are
+   only hidden (not erased) when an admin deletes them. */
+const ttCustom = () => {
+  const c = LS.get("ruh_tt_custom", {});
+  return { lectures: c.lectures || [], exams: c.exams || [] };
+};
+const ttHidden = () => LS.get("ruh_tt_hidden", []);
+const ttLectures = () => [...LECTURES.map((x, i) => ({ ...x, id: "s-l" + i })), ...ttCustom().lectures].filter((x) => !ttHidden().includes(x.id));
+const ttExams = () => [...EXAMS.map((x, i) => ({ ...x, id: "s-e" + i })), ...ttCustom().exams].filter((x) => !ttHidden().includes(x.id));
+function ttRemove(id) {
+  if (id.startsWith("c-")) {
+    const c = ttCustom();
+    c.lectures = c.lectures.filter((x) => x.id !== id);
+    c.exams = c.exams.filter((x) => x.id !== id);
+    LS.set("ruh_tt_custom", c);
+  } else LS.set("ruh_tt_hidden", [...ttHidden(), id]);
+}
 
 /* ---------- [helpers] ---------- */
 const mins = (t) => +t.slice(0, 2) * 60 + +t.slice(3);
@@ -217,11 +247,12 @@ const st = { type: "lectures", fac: saved.fac ?? -1, year: saved.year ?? 0, day:
 const fits = (x) =>
   (st.fac < 0 || x.fac === st.fac) &&
   (!st.year || x.yr === st.year) &&
-  (!st.q || `${x.code} ${x.title} ${x.room} ${x.who}`.toLowerCase().includes(st.q));
+  (!st.q || `${x.code} ${x.title} ${x.room} ${x.who} ${x.cover || ""}`.toLowerCase().includes(st.q));
 const chip = (k, v, label, on) => `<button class="chip${on ? " on" : ""}" data-k="${k}" data-v="${v}">${esc(label)}</button>`;
 
 /* ---------- [draw] ---------- */
 function card(x, i, d) {
+  const admin = isAdmin();
   const exam = !!x.date;
   const left = exam
     ? `<b>${+x.date.slice(8)}</b><small>${new Date(x.date + "T00:00:00").toLocaleDateString("en-GB", { month: "short" })}</small>`
@@ -231,10 +262,12 @@ function card(x, i, d) {
   else if (x.kind === "Practical") badge = `<span class="pri important">Practical</span>`;
   const now = new Date().getHours() * 60 + new Date().getMinutes();
   if (!exam && x.day === todayNo && now >= mins(x.start) && now < mins(x.end)) badge = `<span class="pri urgent">In progress</span>`;
-  return `<div class="aitem rv" data-open="${exam ? "e" : "l"}${i}" role="button" tabindex="0" style="cursor:pointer;transition-delay:${(i % 6) * 0.06}s">
+  return `<div class="aitem rv" data-open="${esc(x.id)}" role="button" tabindex="0" style="cursor:pointer;transition-delay:${(i % 6) * 0.06}s">
     <div class="d">${left}</div>
     <div class="ab">${badge}<h3>${esc(x.code)} · ${esc(x.title)}</h3>
-    <p>${range(x.start, x.end)} · ${esc(x.room)}${x.who ? " · " + esc(x.who) : ""}</p></div></div>`;
+    <p>${range(x.start, x.end)} · ${esc(x.room)}${x.who ? " · " + esc(x.who) : ""}</p>
+    ${x.cover ? `<p>Covers: ${esc(x.cover)}</p>` : ""}
+    ${admin ? `<button class="pill outline" type="button" data-del="${esc(x.id)}" style="padding:.4rem .9rem;font-size:.7rem;margin-top:.6rem">Delete</button>` : ""}</div></div>`;
 }
 
 function render() {
@@ -246,11 +279,12 @@ function render() {
   $("#tDay").innerHTML = [1, 2, 3, 4, 5].map((n) => chip("day", n, DAYS[n] + (n === todayNo ? " · Today" : ""), st.day === n)).join("");
 
   // list
-  const lectures = LECTURES.filter(fits);
-  const exams = EXAMS.filter(fits).filter((x) => daysUntil(x.date) >= 0).sort((a, b) => a.date.localeCompare(b.date) || a.start.localeCompare(b.start));
+  $("#tAdmin").style.display = isAdmin() ? "" : "none";
+  const lectures = ttLectures().filter(fits);
+  const exams = ttExams().filter(fits).filter((x) => daysUntil(x.date) >= 0).sort((a, b) => a.date.localeCompare(b.date) || a.start.localeCompare(b.start));
   const rows = lec ? lectures.filter((x) => x.day === st.day).sort((a, b) => a.start.localeCompare(b.start)) : exams;
   $("#tList").innerHTML = rows.length
-    ? rows.map((x, i) => card(x, (lec ? LECTURES : EXAMS).indexOf(x), lec ? 0 : daysUntil(x.date)).replace(/transition-delay:[\d.]+s/, `transition-delay:${(i % 6) * 0.06}s`)).join("")
+    ? rows.map((x, i) => card(x, i, lec ? 0 : daysUntil(x.date))).join("")
     : `<div class="empty">${lec ? "No lectures on this day for your selection." : "No upcoming exams for your selection."}</div>`;
 
   // numbers
@@ -268,21 +302,95 @@ function render() {
   $$(".rv", $("#ttPage")).concat($$(".rv", $("#tStats"))).forEach((el) => io.observe(el));
 }
 
-function showItem(key) {
-  const exam = key[0] === "e";
-  const x = (exam ? EXAMS : LECTURES)[+key.slice(1)];
+function showItem(id) {
+  let x = ttExams().find((e) => e.id === id);
+  const exam = !!x;
+  if (!x) x = ttLectures().find((l) => l.id === id);
   if (!x) return;
+  const covers = x.cover ? [`Covers: ${x.cover}`] : [];
   const lines = exam
-    ? [`Time: ${range(x.start, x.end)}`, `Venue: ${x.room}`, `Faculty: ${FACULTIES[x.fac]}`, `Year: ${x.yr}`, "", "Bring your student ID and arrive 15 minutes early."]
-    : [`Day: ${["", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"][x.day]} (every week)`, `Time: ${range(x.start, x.end)}`, `Venue: ${x.room}`, `Lecturer: ${x.who}`, `Faculty: ${FACULTIES[x.fac]}`, `Year: ${x.yr}`];
+    ? [`Time: ${range(x.start, x.end)}`, `Venue: ${x.room}`, ...(x.who ? [`Lecturer: ${x.who}`] : []), ...covers, `Faculty: ${FACULTIES[x.fac]}`, `Year: ${x.yr}`, "", "Bring your student ID and arrive 15 minutes early."]
+    : [`Day: ${["", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"][x.day]} (every week)`, `Time: ${range(x.start, x.end)}`, `Venue: ${x.room}`, `Lecturer: ${x.who}`, ...covers, `Faculty: ${FACULTIES[x.fac]}`, `Year: ${x.yr}`];
   openRead({
     eyebrow: exam ? "Exam" : x.kind,
     title: `${x.code} — ${x.title}`,
     date: exam ? x.date : nextDate(x.day),
-    author: exam ? "Examinations Branch" : x.who,
+    author: exam ? x.who || "Examinations Branch" : x.who,
     text: lines.join("\n"),
   });
 }
+
+/* ---------- [admin form] add a lecture or an exam (administrators only) ---------- */
+function ttForm(kind = "lecture") {
+  if (!isAdmin()) return openAuth("login");
+  const lec = kind === "lecture";
+  const panel = $("#pAdmin");
+  const field = (id, label, input) => `<div class="field"><label for="${id}">${label}</label>${input}</div>`;
+  const opts = (list, first = 0) => list.map((n, i) => `<option value="${i + first}">${esc(n)}</option>`).join("");
+  panel.innerHTML = `
+    <div class="mhead">
+      <div><span class="eyebrow">Administrator</span><h2>Add ${lec ? "lecture" : "exam"}</h2></div>
+      <button class="xbtn" data-close="mAdmin" aria-label="Close">${X_ICON}</button>
+    </div>
+    <div class="tabs"><button type="button" class="${lec ? "on" : ""}" data-t="lecture">Lecture</button><button type="button" class="${lec ? "" : "on"}" data-t="exam">Exam</button></div>
+    <form class="f" id="fTT" novalidate style="margin-top:1.25rem">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">
+        ${field("tfCode", "Course code", '<input id="tfCode" placeholder="ENG 2201" maxlength="20">')}
+        ${field("tfTitle", "Course title", '<input id="tfTitle" placeholder="Engineering Mathematics II" maxlength="80">')}
+        ${lec
+          ? field("tfDay", "Day", `<select id="tfDay">${opts(DAYS.slice(1), 1)}</select>`) + field("tfKind", "Type", '<select id="tfKind"><option>Lecture</option><option>Practical</option><option>Tutorial</option></select>')
+          : field("tfDate", "Exam date", `<input id="tfDate" type="date" min="${isoDate(new Date())}">`)}
+        ${field("tfStart", "Start time", '<input id="tfStart" type="time">')}
+        ${field("tfEnd", "End time", '<input id="tfEnd" type="time">')}
+        ${field("tfRoom", "Venue", '<input id="tfRoom" placeholder="Lecture Hall 3" maxlength="60">')}
+        ${field("tfWho", lec ? "Lecturer name" : "Lecturer / examiner name", '<input id="tfWho" placeholder="Dr. K. Silva" maxlength="60">')}
+        ${field("tfFac", "Faculty", `<select id="tfFac">${opts(FACULTIES)}</select>`)}
+        ${field("tfYear", "Year", `<select id="tfYear">${opts(["Year 1", "Year 2", "Year 3", "Year 4"], 1)}</select>`)}
+      </div>
+      ${field("tfCover", "Intended cover area", `<textarea id="tfCover" rows="3" maxlength="200" placeholder="${lec ? "Topics this session will cover" : "Units / chapters the exam covers"}"></textarea>`)}
+      <div class="err" id="tfErr"></div>
+      <button class="pill solid" type="submit">Save ${lec ? "lecture" : "exam"}</button>
+    </form>`;
+  $$(".tabs button", panel).forEach((b) => (b.onclick = () => ttForm(b.dataset.t)));
+
+  $("#fTT").onsubmit = (e) => {
+    e.preventDefault();
+    if (!isAdmin()) return;
+    const v = (id) => $("#" + id).value.trim();
+    const err = $("#tfErr");
+    const x = { id: "c-" + Date.now().toString(36), code: v("tfCode").toUpperCase(), title: v("tfTitle"), start: v("tfStart"), end: v("tfEnd"), room: v("tfRoom"), who: v("tfWho"), cover: v("tfCover"), fac: +v("tfFac"), yr: +v("tfYear") };
+    if (!x.code || !x.title) return void (err.textContent = "Enter the course code and title.");
+    if (lec) {
+      x.day = +v("tfDay");
+      x.kind = v("tfKind");
+    } else {
+      x.date = v("tfDate");
+      if (!x.date) return void (err.textContent = "Choose the exam date.");
+      if (daysUntil(x.date) < 0) return void (err.textContent = "The exam date must be today or later (past exams are not shown).");
+    }
+    if (!x.start || !x.end) return void (err.textContent = "Enter the start and end time.");
+    if (mins(x.end) <= mins(x.start)) return void (err.textContent = "The end time must be after the start time.");
+    if (!x.room) return void (err.textContent = "Enter the venue.");
+    if (!x.who) return void (err.textContent = "Enter the lecturer name.");
+    if (!x.cover) return void (err.textContent = "Describe the intended cover area.");
+
+    const c = ttCustom();
+    (lec ? c.lectures : c.exams).push(x);
+    LS.set("ruh_tt_custom", c);
+    // show the new entry straight away: switch the filters to match it
+    Object.assign(st, { type: lec ? "lectures" : "exams", fac: x.fac, year: x.yr, q: "" });
+    if (lec) st.day = x.day;
+    if ($("#tQ")) $("#tQ").value = "";
+    closeM("mAdmin");
+    render();
+    toast((lec ? "Lecture" : "Exam") + " added");
+  };
+  openM("mAdmin");
+  setTimeout(() => $("#tfCode")?.focus(), 150);
+}
+
+// Lets script.js redraw this page when someone signs in or out (so the admin bar appears/disappears).
+Portal.register({ name: "timetables", order: 90, render: () => render() });
 
 /* ---------- [start] runs after script.js has built the page ---------- */
 document.addEventListener("DOMContentLoaded", () => {
@@ -299,6 +407,17 @@ document.addEventListener("DOMContentLoaded", () => {
   TITLES.home = "Timetables — University of Ruhuna";
 
   $("#ttPage").addEventListener("click", (e) => {
+    const add = e.target.closest("[data-add]");
+    if (add) return ttForm(add.dataset.add);
+    const del = e.target.closest("[data-del]");
+    if (del) {
+      if (isAdmin() && confirm("Delete this entry from the timetable?")) {
+        ttRemove(del.dataset.del);
+        render();
+        toast("Entry deleted");
+      }
+      return;
+    }
     const c = e.target.closest("[data-k]");
     if (c) {
       st[c.dataset.k] = c.dataset.k === "type" ? c.dataset.v : +c.dataset.v;
@@ -309,7 +428,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (it) showItem(it.dataset.open);
   });
   $("#ttPage").addEventListener("keydown", (e) => {
-    const it = e.key === "Enter" && e.target.closest("[data-open]");
+    const it = e.key === "Enter" && !e.target.closest("[data-del]") && e.target.closest("[data-open]");
     if (it) showItem(it.dataset.open);
   });
   $("#tQ")?.addEventListener("input", (e) => {
