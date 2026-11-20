@@ -68,7 +68,7 @@
   <section class="hero">
     <!-- Background photo: Resource/images/hero.jpg -->
     <div class="plate"><div class="inner" data-parallax>
-      <img src="Resource/images/hero.jpg" alt="University of Ruhuna campus" fetchpriority="high">
+      <img src="3.jpg" alt="University of Ruhuna campus" fetchpriority="high">
     </div></div>
 
     <h1 class="words" data-words>Ruhuna University News Portal</h1>   <!-- EDIT: giant title -->
@@ -77,12 +77,24 @@
       <!-- EDIT: the two lines of the tagline -->
       <p class="tag"><span class="clip"><span style="transition-delay:.35s">Stay Informed,</span></span><span class="clip"><span style="transition-delay:.46s">Stay Ahead</span></span></p>
 
-      <div class="cluster" data-slot="hero"></div>
+      <div class="cluster">
+        <!-- Small card that rotates the 3 latest news (filled automatically from script.js) -->
+        <div class="slider rv" style="transition-delay:.65s">
+          <div class="scard glass" id="sCard"></div>
+          <div class="dotsrow light" id="sDots"></div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Slot: the Announcements file puts its scrolling ticker here -->
-  <div data-slot="ticker"></div>
+  <!-- ==== OPTIONAL FEATURE: NEWS TICKER (scrolling urgent/important notices) ====
+       Fills itself from the ANNOUNCEMENTS list. To remove: delete this block,
+       or set features.ticker = false in script.js. -->
+  <div class="ticker rv" id="ticker" data-feature="ticker" hidden>
+    <span class="lab">Latest</span>
+    <div class="roll"><div class="roll-in" id="tickerItems"></div></div>
+  </div>
+  <!-- ==== END OPTIONAL: NEWS TICKER ==== -->
 
   <!-- ==== OPTIONAL FEATURE: QUICK LINKS (4 big buttons) ====
        EDIT: change the names and put the real web address in each href="...".
@@ -95,8 +107,25 @@
   </div>
   <!-- ==== END OPTIONAL: QUICK LINKS ==== -->
 
-  <!-- Slot: News and Announcements files add their home sections here -->
-  <div data-slot="main"></div>
+  <!-- ---------- HOME: LATEST NEWS (3 newest, comes from script.js NEWS list) ---------- -->
+  <section class="s surface pad mt3" style="padding-top:5rem">
+    <div class="rv"><span class="eyebrow">Latest news</span><h2 class="t">Fresh from<br>campus</h2></div>
+    <div class="adminbar" data-admin-only hidden>
+      <b>Admin mode</b><span>Add or remove content, or change the site colours.</span><span class="sp"></span>
+      <button class="pill gold" data-act="admin-news">+ News</button>
+      <button class="pill gold" data-act="admin-ann">+ Announcement</button>
+      <button class="pill gold" data-act="admin-theme">Colours</button>
+    </div>
+    <ul class="gridn" id="homeNews"></ul>
+    <div style="margin-top:2.5rem"><a class="pill solid" href="#/news">All news <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+  </section>
+
+  <!-- ---------- HOME: ANNOUNCEMENTS (3 newest, comes from script.js ANNOUNCEMENTS list) ---------- -->
+  <section class="s pad" style="background:var(--background)">
+    <div class="rv"><span class="eyebrow">Notice board</span><h2 class="t">Announcements</h2></div>
+    <ul class="alist" id="homeAnn"></ul>
+    <div style="margin-top:2.5rem"><a class="pill outline" href="#/announcements">See all notices <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+  </section>
 
   <!-- ---------- HOME: FACULTIES (EDIT: copy one <li> block to add a faculty) ---------- -->
   <section class="s pad surface mt3" style="padding-top:6rem">
@@ -111,7 +140,7 @@
     </ul>
   </section>
 
-  <!-- ---------- HOME: NUMBERS (EDIT: change the big numbers and labels) ---------- -->
+  <!-- ------x---- HOME: NUMBERS (EDIT: change the big numbers and labels) ---------- -->
   <section class="s dark pad mt3">
     <div class="rv"><span class="eyebrow light">By the numbers</span><h2 class="t">A university<br>that grows</h2></div>
     <dl class="stats">
@@ -126,7 +155,35 @@
 </section>
 <!-- ##########################  PAGE: HOME  END  ######################## -->
 
-<!-- Pages from the modules folder are inserted here automatically -->
+<!-- #####################################################################
+     ########################  PAGE: NEWS  START  ########################
+     The news cards are NOT written here. They come from the NEWS list in
+     script.js (section 2). Only the banner text is edited here.
+     ##################################################################### -->
+<section class="page" data-page="news">
+
+  <section class="phero">
+    <div class="plate"><div class="inner" data-parallax><img src="Resource/images/news-banner.JPG" alt="" style="object-position:70% 40%"></div></div>
+    <span class="eyebrow light">University news</span>
+    <h1 class="words" data-words>News</h1>
+    <p>Research, campus life, academics and achievements from across the University of Ruhuna.</p>
+  </section>
+
+  <section class="s pad" style="background:var(--background);margin-top:.75rem">
+    <div class="adminbar" data-admin-only hidden>
+      <b>Admin mode</b><span>Add or remove news.</span><span class="sp"></span>
+      <button class="pill gold" data-act="admin-news">+ News</button>
+      <button class="pill gold" data-act="admin-theme">Colours</button>
+    </div>
+    <!-- OPTIONAL FEATURE: SEARCH BOX (remove this block or set features.search = false) -->
+    <label class="search" data-feature="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="qNews" type="search" placeholder="Search news…" autocomplete="off"></label>
+    <div class="filters" id="filters"></div>   <!-- category buttons, made automatically -->
+    <ul class="gridn" id="newsGrid"></ul>       <!-- news cards, made automatically -->
+  </section>
+
+</section>
+<!-- ########################  PAGE: NEWS  END  ########################## -->
+
 </div><!-- end #view -->
 
 
