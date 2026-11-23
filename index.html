@@ -11,7 +11,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500&display=swap" rel="stylesheet">
 
-<!-- The ONE stylesheet of the whole site -->
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -92,8 +91,6 @@
     <a href="#/home" data-nav="home">Home</a>
     <a href="#/news" data-nav="news">News</a>
     <a href="#/announcements" data-nav="announcements">Announcements</a>
-    <a href="#/timetables" data-nav="timetables">Timetables</a>
-    <a href="#/results" data-nav="results">Results</a>
   </nav>
 
   <!-- Logo + name (click = go Home) -->
@@ -103,11 +100,6 @@
   </a>
 
   <div class="right">
-    <!-- OPTIONAL: light/dark mode button (remove this button, or set features.modeButton = false in script.js) -->
-    <button class="modebtn" id="modeBtn" data-feature="modeButton" aria-label="Switch between light and dark mode">
-      <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-      <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-    </button>
     <!-- Button that opens the right slide menu -->
     <button class="burger" id="burger" aria-label="Open menu"><i></i><i></i></button>
   </div>
@@ -123,9 +115,6 @@
      ##################################################################### -->
 <section class="page" data-page="home">
 
-  <!-- ---------- HOME: HERO (the BIG RECTANGLE with the changing photos) ----------
-       The photos are NOT written here. They come from  SETTINGS.heroSlides  in
-       script.js (SECTION 1). To change / add / remove a photo, edit that list. -->
   <section class="hero">
     <div class="plate"><div class="inner" data-parallax>
       <!-- script.js puts one <img> per photo in here and fades between them -->
@@ -152,22 +141,13 @@
     <div class="hctrl" id="heroDots" aria-hidden="true"></div>
   </section>
 
-  <!-- ==== OPTIONAL FEATURE: NEWS TICKER (scrolling urgent/important notices) ====
-       Fills itself from the ANNOUNCEMENTS list. To remove: delete this block,
-       or set features.ticker = false in script.js. -->
-  <div class="ticker rv" id="ticker" data-feature="ticker" hidden>
-    <span class="lab">Latest</span>
-    <div class="roll"><div class="roll-in" id="tickerItems"></div></div>
-  </div>
-  <!-- ==== END OPTIONAL: NEWS TICKER ==== -->
-
   <!-- ==== OPTIONAL FEATURE: QUICK LINKS (4 big buttons) ====
        EDIT: change the names and put the real web address in each href="...".
        The Timetables button opens the Timetables page of this site.
        To remove: delete this block, or set features.quickLinks = false. -->
   <div class="quick" data-feature="quickLinks">
-    <a class="rv" href="http://www.ruh.ac.lk" target="_blank" rel="noopener"><span>Student portal<small>Your account</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-    <a class="rv" href="http://www.ruh.ac.lk" target="_blank" rel="noopener" style="transition-delay:.08s"><span>Library<small>Books and journals</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    <a class="rv" href="http://scilms.ruh.ac.lk" target="_blank" rel="noopener"><span>Student portal<small>Your account</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    <a class="rv" href="https://opac.lib.ruh.ac.lk" target="_blank" rel="noopener" style="transition-delay:.08s"><span>Library<small>Books and journals</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     <a class="rv" href="#/results" style="transition-delay:.16s"><span>Exam results<small>Check your marks</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     <a class="rv" href="#/timetables" style="transition-delay:.24s"><span>Timetables<small>Lectures and exams</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
   </div>
@@ -452,7 +432,7 @@
 
   <!-- Banner at the top. EDIT: photo, title, sentence -->
   <section class="phero">
-    <div class="plate"><div class="inner" data-parallax><img src="Resource/images/bigthing/1.jpg" alt="" style="object-position:50% 50%"></div></div>
+    <div class="plate"><div class="inner" data-parallax><img src="Resource/images/bigthing/1.jpeg" alt="" style="object-position:50% 50%"></div></div>
     <span class="eyebrow light">Our story</span>
     <h1 class="words" data-words>About Ruhuna</h1>
     <p>Established in 1978 and a full university since 1984, in Matara, southern Sri Lanka.</p>
@@ -466,14 +446,14 @@
         <h2 class="t" style="margin-bottom:1.5rem">The university of the south</h2>
         <p>The University of Ruhuna opened as Ruhuna University College in 1978 at Meddawatta, Matara, and became a full university in 1984. It remains the only university in Sri Lanka's southern region.</p>
         <p>The main campus at Wellamadama, Matara covers about 72 acres, with faculties and teaching hospitals across the southern province.</p>
-        <p>Its motto, <em>Paññāya Narānaṃ Ratanaṃ</em>, means wisdom is the jewel of humankind.</p>
+        <p>Its motto, <em> wisdom is the jewel of humankind</em>.</p>
       </div>
-      <div class="photo rv"><img class="ph" src="Resource/images/bigthing/1.jpg" alt="University of Ruhuna"></div>
+      <div class="photo rv"><img class="ph" src="Resource/images/bigthing/1.jpeg" alt="University of Ruhuna"></div>
     </div>
 
     <!-- ABOUT: THREE SMALL BOXES (EDIT text) -->
     <div class="vm">
-      <div class="rv"><h3>Motto</h3><p>Paññāya Narānaṃ Ratanaṃ — wisdom is the jewel of people.</p></div>
+      <div class="rv"><h3>Motto</h3><p>wisdom is the jewel of people.</p></div>
       <div class="rv" style="transition-delay:.1s"><h3>Colours</h3><p>Yellow and brown, reflected throughout this portal.</p></div>
       <div class="rv" style="transition-delay:.2s"><h3>Languages</h3><p>Sinhala, Tamil and English.</p></div>
     </div>
@@ -499,30 +479,17 @@
 
 </div><!-- end #view -->
 
-
-<!-- =====================================================================
-     FOOTER  (shown at the bottom of every page)
-     EDIT: contact lines and the small text
-     ===================================================================== -->
 <footer class="ft mt3">
-  <!-- ==== OPTIONAL FEATURE: FOOTER SCROLLING TEXT (like the GRAVITY site) ====
-       EDIT: change the words. Each <div class="mq-item"> is one phrase; the round dot
-       after it is automatic. Add or delete phrases freely (copy one line).
-       You only edit this ONE list: the page repeats it by itself so it never has gaps.
-       To remove: delete this whole block, or set features.footerMarquee = false in script.js. -->
   <div class="f-marquee" data-feature="footerMarquee" aria-hidden="true">
     <div class="mq-track">
       <div class="mq-set">
         <div class="mq-item"><span>University of Ruhuna</span><i class="mq-dot"></i></div>
         <div class="mq-item"><span>Stay informed</span><i class="mq-dot"></i></div>
-        <div class="mq-item"><span>Paññāya Narānaṃ Ratanaṃ</span><i class="mq-dot"></i></div>
         <div class="mq-item"><span>News &amp; announcements</span><i class="mq-dot"></i></div>
       </div>
     </div>
   </div>
-  <!-- ==== END OPTIONAL: FOOTER SCROLLING TEXT ==== -->
 
-  <!-- Big "Contact us" call-to-action -->
   <div class="cta">
     <div>
       <span class="eyebrow light">Stay connected</span>
@@ -535,7 +502,7 @@
   <div class="cols">
     <div>
       <div class="brand"><span class="logo" data-logo></span><span><b style="font-size:1.1rem">Ruhuna</b><small>University · Matara</small></span></div>
-      <p class="blurb">The only university in Sri Lanka's southern region — news, notices and campus stories from the University of Ruhuna.</p>
+      <p class="blurb">The only university in Sri Lanka's southern region <br> news, notices and campus stories from the University of Ruhuna.</p>
       <address><span>Wellamadama, Matara, Sri Lanka</span><a href="tel:+94412222681">+94 (41) 222 2681-2</a><a href="http://www.ruh.ac.lk" target="_blank" rel="noopener">www.ruh.ac.lk</a></address>
     </div>
     <nav><h4>Portal</h4><ul><li><a href="#/home">Home</a></li><li><a href="#/news">News</a></li><li><a href="#/announcements">Announcements</a></li><li><a href="#/timetables">Timetables</a></li><li><a href="#/results">Results</a></li></ul></nav>
@@ -546,11 +513,7 @@
 </main>
 
 
-<!-- =====================================================================
-     RIGHT SLIDE MENU (opens from the button in the top right)
-     To add a page: add a <section class="page" data-page="NAME"> above,
-     a link here, and add "NAME" to PAGES in script.js.
-     ===================================================================== -->
+<!-- RIGHT SLIDE MENU -->
 <div class="drawer" id="drawer">
   <div class="bk" data-close="drawer"></div>
   <aside role="dialog" aria-label="Menu" data-lenis-prevent>
@@ -572,29 +535,13 @@
   </aside>
 </div>
 
-
-<!-- NOTE: data-lenis-prevent on the pop-ups lets them scroll with the mouse wheel
-     even though the page behind is locked. Keep it on any new scrollable pop-up. -->
-<!-- =====================================================================
-     GLASS POP-UPS (empty here; script.js fills them: sign in, admin panel,
-     read article / timetable details)
-     ===================================================================== -->
 <div class="modal" id="mAuth"><div class="bk" data-close="mAuth"></div><div class="panel" role="dialog" aria-modal="true" aria-label="Sign in" id="pAuth" data-lenis-prevent></div></div>
 <div class="modal" id="mAdmin"><div class="bk" data-close="mAdmin"></div><div class="panel wide" role="dialog" aria-modal="true" aria-label="Admin panel" id="pAdmin" data-lenis-prevent></div></div>
 <div class="modal" id="mRead"><div class="bk" data-close="mRead"></div><div class="panel wide" role="dialog" aria-modal="true" aria-label="Details" id="pRead" data-lenis-prevent></div></div>
 <div id="toast" role="status"></div>   <!-- the small message at the bottom of the screen -->
-
-<!-- ==== OPTIONAL FEATURE: SCROLL TOOLS (thin progress line on top + back-to-top button) ====
-     To remove: delete these two lines, or set features.scrollTools = false. -->
 <div id="progress" data-feature="scrollTools"></div>
 <button id="toTop" data-feature="scrollTools" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
-<!-- ==== END OPTIONAL: SCROLL TOOLS ==== -->
 
-
-<!-- =====================================================================
-     SCRIPT LINK — the ONE JavaScript file of the whole site.
-     Keep this as the last line, after everything above.
-     ===================================================================== -->
 <script src="script.js"></script>
 </body>
 </html>

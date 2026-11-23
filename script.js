@@ -1,37 +1,8 @@
-/* =======================================================================
-   UNIVERSITY OF RUHUNA NEWS PORTAL — script.js
-
-   (Group 15 site + Ruhuna portal merged into ONE script file)
-
-   SECTION 1  SETTINGS            admin login, HOME BIG-RECTANGLE PHOTOS, photo folders,
-                                  colours, ON/OFF switches
-   SECTION 2  NEWS LIST           add / edit news here
-   SECTION 3  ANNOUNCEMENTS LIST  add / edit announcements here
-   SECTION 4  TIMETABLE LIST      add / edit lectures and exams here
-   SECTION 5  EXAM RESULTS LIST   add / edit students' results and the grade table here
-   SECTION 6  ENGINE              the code that makes the site work (don't touch)
-
-   HOW TO COPY / PASTE A PART:  every section starts with a big banner like the
-   ones above and every block inside has its own small comment. Copy from one
-   banner to the next banner and paste it in the same place in your file.
-
-   Photos live in  Resource/images/  (see the README.txt files in that folder).
-   ======================================================================= */
-
-/* =======================================================================
-   SECTION 1 — SETTINGS
-   ======================================================================= */
 const SETTINGS = {
-  /* ---- Admin login (demo only!) ------------------------------------
-     Anyone can read this in the page code, so it is NOT real security.
-     A real login needs a server/database.                              */
   adminEmail: "admin@ruh.ac.lk",
   adminPassword: "Ruhuna@2026",
   adminName: "Portal Admin",
 
-  /* ---- University logo ----------------------------------------------
-     Used on the loading screen, top bar, menu and footer.
-     Just save your logo as  Resource/images/logo.png                    */
   logo: "Resource/images/logo.png",
 
   /* ---- HOME PAGE BIG RECTANGLE: the photos that change -------------------
@@ -46,12 +17,12 @@ const SETTINGS = {
      TO CHANGE ORDER   move the lines; the first one shows first
      Photos of about 1920 pixels wide look sharpest. Small photos look blurry.   */
   heroFolder: "Resource/images/bigthing/",
-  heroSeconds: 5, // how many seconds each photo stays
+  heroSeconds: 4, // how many seconds each photo stays
   heroSlides: [
     { image: "3.jpg", alt: "Aerial view of the Ruhuna campus beside the sea", position: "50% 45%" },
     { image: "4.jpg", alt: "Campus building across the lake", position: "50% 55%" },
-    { image: "2.jpg", alt: "Aerial view of the campus roofs and the ocean", position: "50% 50%" },
-    { image: "1.jpg", alt: "Aerial view of the main campus building", position: "50% 50%" },
+    { image: "2.jpeg", alt: "Main entrance", position: "50% 50%" },
+    { image: "1.jpeg", alt: "Aerial view of the main campus building", position: "50% 50%" },
     // { image: "5.jpg", alt: "Describe your new photo", position: "50% 50%" },   <- copy this line for a new photo
   ],
 
