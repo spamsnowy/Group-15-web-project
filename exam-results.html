@@ -1,0 +1,987 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Exam Results — University of Ruhuna</title>
+<meta name="description" content="Check examination results at the University of Ruhuna.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="styles.css">
+
+<style>
+/* EXAM RESULTS PAGE STYLES */
+
+.results-wrap {
+  max-width: 1100px;
+  margin: auto;
+}
+
+.results-card {
+  background: var(--surface, #241307);
+  border: 1px solid rgba(242,183,5,.15);
+  border-radius: 18px;
+  padding: clamp(1.2rem, 4vw, 2.5rem);
+  margin-top: 2rem;
+}
+
+.results-intro {
+  max-width: 650px;
+  margin-bottom: 2rem;
+}
+
+.results-intro p {
+  opacity: .75;
+  line-height: 1.7;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+}
+
+.result-field {
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
+}
+
+.result-field label {
+  font-size: .85rem;
+  font-weight: 600;
+}
+
+.result-field select,
+.result-field input {
+  width: 100%;
+  padding: .9rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(242,183,5,.25);
+  background: rgba(255,255,255,.05);
+  color: inherit;
+  font-family: inherit;
+  font-size: .9rem;
+  outline: none;
+}
+
+.result-field select:focus,
+.result-field input:focus {
+  border-color: #f2b705;
+  box-shadow: 0 0 0 2px rgba(242,183,5,.12);
+}
+
+.result-field select option {
+  background: #301a0e;
+  color: white;
+}
+
+.search-choice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .8rem;
+  margin: 1.5rem 0;
+}
+
+.search-choice label {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .8rem 1rem;
+  border: 1px solid rgba(242,183,5,.2);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: .85rem;
+}
+
+.search-choice input {
+  accent-color: #f2b705;
+}
+
+.results-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .95rem 2rem;
+  border: none;
+  border-radius: 30px;
+  background: #f2b705;
+  color: #281507;
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.results-submit:hover {
+  transform: translateY(-2px);
+  background: #ffd34d;
+}
+
+.results-output {
+  display: none;
+  margin-top: 2rem;
+}
+
+.results-output.show {
+  display: block;
+}
+
+.result-summary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.2rem;
+  border-radius: 12px;
+  background: rgba(242,183,5,.09);
+  margin-bottom: 1.3rem;
+}
+
+.result-summary p {
+  margin: .3rem 0;
+  font-size: .85rem;
+  opacity: .75;
+}
+
+.gpa-box {
+  text-align: right;
+}
+
+.gpa-box strong {
+  display: block;
+  font-size: 1.8rem;
+  color: #f2b705;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  border-radius: 12px;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 550px;
+  font-size: .85rem;
+}
+
+.results-table th,
+.results-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.results-table th {
+  color: #f2b705;
+  font-weight: 600;
+  background: rgba(242,183,5,.07);
+}
+
+.results-table tr:hover td {
+  background: rgba(242,183,5,.04);
+}
+
+.grade {
+  display: inline-block;
+  min-width: 38px;
+  text-align: center;
+  padding: .3rem .55rem;
+  border-radius: 6px;
+  background: rgba(242,183,5,.13);
+  color: #f2b705;
+  font-weight: 700;
+}
+
+.demo-note {
+  font-size: .78rem;
+  opacity: .65;
+  margin-top: 1rem;
+  line-height: 1.6;
+}
+
+.result-error {
+  color: #ff9b86;
+  font-size: .85rem;
+  margin-top: 1rem;
+}
+
+@media(max-width:650px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .results-summary {
+    flex-direction: column;
+  }
+
+  .gpa-box {
+    text-align: left;
+  }
+
+  .results-submit {
+    width: 100%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER: same structure as the timetable page -->
+
+<header class="top" id="top">
+  <nav class="nav" id="topnav" aria-label="Primary"></nav>
+
+  <a href="index.html#/home" class="brand" aria-label="University of Ruhuna home">
+    <span class="logo" data-logo></span>
+    <span>
+      <b>Ruhuna</b>
+      <small>University · Matara</small>
+    </span>
+  </a>
+
+  <div class="right">
+    <button class="modebtn" id="modeBtn" data-feature="modeButton"
+      aria-label="Switch between light and dark mode">
+      <svg class="i-sun" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+      </svg>
+      <svg class="i-moon" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+      </svg>
+    </button>
+
+    <button class="burger" id="burger" aria-label="Open menu">
+      <i></i><i></i>
+    </button>
+  </div>
+</header>
+
+<main>
+<div id="view">
+
+<section class="page" data-page="home">
+
+  <!-- HERO -->
+  <section class="phero">
+    <div class="plate">
+      <div class="inner" data-parallax>
+        <img src="Resource/images/hero.jpg" alt="">
+      </div>
+    </div>
+
+    <span class="eyebrow light">Academic information</span>
+    <h1 class="words" data-words>Exam Results</h1>
+    <p class="rv">
+      Check your examination results.
+    </p>
+  </section>
+
+  <!-- SEARCH FORM -->
+  <section class="s pad">
+    <div class="results-wrap">
+
+      <div class="results-intro rv">
+        <span class="eyebrow">Student services</span>
+        <h2 class="t">Your results,<br>one place</h2>
+        <p>
+          Select your degree programme and academic details.
+          Enter your registration number to view your examination results.
+        </p>
+      </div>
+
+      <div class="results-card rv">
+
+        <form id="resultForm">
+
+          <div class="form-grid">
+
+           
+<!-- Faculty Dropdown -->
+<div class="result-field">
+    <label for="faculty">Faculty</label>
+
+    <select id="faculty" name="faculty" required>
+        <option value="">Select faculty</option>
+
+        <option value="engineering">Faculty of Engineering</option>
+        <option value="agriculture">Faculty of Agriculture</option>
+        <option value="allied-health">Faculty of Allied Health Sciences</option>
+        <option value="fisheries">Faculty of Fisheries and Marine Sciences and Technology</option>
+        <option value="humanities">Faculty of Humanities and Social Sciences</option>
+        <option value="management">Faculty of Management and Finance</option>
+        <option value="medicine">Faculty of Medicine</option>
+        <option value="science">Faculty of Science</option>
+        <option value="technology">Faculty of Technology</option>
+    </select>
+</div>
+
+
+<!-- Degree Programme Dropdown -->
+<div class="result-field">
+    <label for="degree">Degree programme</label>
+
+    <select id="degree" name="degree" required>
+        <option value="">Select degree</option>
+    </select>
+</div>
+
+
+            <div class="result-field">
+              <label for="level">Academic level</label>
+              <select id="level" required>
+                <option value="">Select level</option>
+                <option value="1">Level I</option>
+                <option value="2">Level II</option>
+                <option value="3">Level III</option>
+              </select>
+            </div>
+
+            <div class="result-field">
+              <label for="semester">Semester</label>
+              <select id="semester" required>
+                <option value="">Select semester</option>
+                <option value="1">Semester I</option>
+                <option value="2">Semester II</option>
+              </select>
+            </div>
+
+          </div>
+
+          <div class="search-choice">
+            <label>
+              <input type="radio" name="searchType" value="all" checked>
+              All subjects
+            </label>
+
+            <label>
+              <input type="radio" name="searchType" value="one">
+              One particular subject
+            </label>
+          </div>
+
+          <div class="result-field" id="subjectField" style="display:none;margin-bottom:1.2rem">
+            <label for="subject">Select subject</label>
+            <select id="subject">
+              <option value="">Select a subject</option>
+            </select>
+          </div>
+
+          <div class="result-field" style="margin-bottom:1.5rem">
+            <label for="regNo">Registration number</label>
+            <input
+              type="text"
+              id="regNo"
+              placeholder="Example: SC/2024/12345"
+              maxlength="30"
+              required
+            >
+          </div>
+
+          <button class="results-submit" type="submit">
+            Search Results →
+          </button>
+
+          <p class="result-error" id="errorMessage"></p>
+
+        </form>
+
+        <!-- RESULTS OUTPUT -->
+        <div class="results-output" id="resultsOutput">
+
+          <div class="result-summary">
+            <div>
+              <span class="eyebrow">Examination report</span>
+              <h3 id="studentName">Student Results</h3>
+              <p id="studentDetails"></p>
+            </div>
+
+            <div class="gpa-box">
+              <span class="eyebrow">Demonstration GPA</span>
+              <strong id="gpaValue">0.00</strong>
+            </div>
+          </div>
+
+          <div class="table-scroll">
+            <table class="results-table">
+              <thead>
+                <tr>
+                  <th>Course Code</th>
+                  <th>Course Unit</th>
+                  <th>Grade</th>
+                  <th>Grade Point</th>
+                </tr>
+              </thead>
+
+              <tbody id="resultsBody"></tbody>
+            </table>
+          </div>
+
+          <p class="demo-note">
+            Note: This is a demonstration system for the university website
+            assignment. The displayed grades and GPA are sample values and
+            are not official examination results.
+          </p>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</section>
+</div>
+
+<!-- FOOTER: shared website design -->
+
+<footer class="ft mt3">
+
+  <div class="f-marquee" data-feature="footerMarquee" aria-hidden="true">
+    <div class="mq-track">
+      <div class="mq-set">
+        <div class="mq-item"><span>University of Ruhuna</span><i class="mq-dot"></i></div>
+        <div class="mq-item"><span>Academic excellence</span><i class="mq-dot"></i></div>
+        <div class="mq-item"><span>Paññāya Narānaṃ Ratanaṃ</span><i class="mq-dot"></i></div>
+        <div class="mq-item"><span>Examination results</span><i class="mq-dot"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta">
+    <div>
+      <span class="eyebrow light">Stay connected</span>
+      <p>
+        <span class="clip rv-line"><span>Know what's</span></span>
+        <span class="clip rv-line"><span>happening</span></span>
+      </p>
+    </div>
+
+    <a class="pill light rv" href="index.html#/contact">
+      Contact us →
+    </a>
+  </div>
+
+  <div class="cols">
+    <div>
+      <div class="brand">
+        <span class="logo" data-logo></span>
+        <span>
+          <b style="font-size:1.1rem">Ruhuna</b>
+          <small>University · Matara</small>
+        </span>
+      </div>
+
+      <p class="blurb">
+        News, notices and campus stories from the University of Ruhuna.
+      </p>
+
+      <address>
+        <span>Wellamadama, Matara, Sri Lanka</span>
+        <a href="tel:+94412222681">+94 (41) 222 2681-2</a>
+        <a href="https://www.ruh.ac.lk" target="_blank" rel="noopener">
+          www.ruh.ac.lk
+        </a>
+      </address>
+    </div>
+
+    <nav>
+      <h4>Portal</h4>
+      <ul id="fPortal"></ul>
+    </nav>
+
+    <nav>
+      <h4>University</h4>
+      <ul>
+        <li>
+          <a href="https://www.ruh.ac.lk" target="_blank" rel="noopener">
+            Official site
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="bar">
+    <span>© 2026 University of Ruhuna News Portal. Sample content for demonstration.</span>
+    <span>Paññāya Narānaṃ Ratanaṃ</span>
+  </div>
+
+</footer>
+</main>
+
+<!-- SHARED WEBSITE COMPONENTS -->
+
+<div class="drawer" id="drawer">
+  <div class="bk" data-close="drawer"></div>
+
+  <aside role="dialog" aria-label="Menu" data-lenis-prevent>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div class="brand">
+        <span class="logo" data-logo></span>
+        <span><b>Ruhuna</b><small>University · Matara</small></span>
+      </div>
+      <button class="xbtn" data-close="drawer" aria-label="Close menu">×</button>
+    </div>
+
+    <nav id="dnav"></nav>
+    <div class="foot" id="dfoot"></div>
+  </aside>
+</div>
+
+<div class="modal" id="mAuth">
+  <div class="bk" data-close="mAuth"></div>
+  <div class="panel" role="dialog" aria-modal="true" id="pAuth"></div>
+</div>
+
+<div class="modal" id="mAdmin">
+  <div class="bk" data-close="mAdmin"></div>
+  <div class="panel wide" role="dialog" aria-modal="true" id="pAdmin"></div>
+</div>
+
+<div class="modal" id="mRead">
+  <div class="bk" data-close="mRead"></div>
+  <div class="panel wide" role="dialog" aria-modal="true" id="pRead"></div>
+</div>
+
+<div id="toast" role="status"></div>
+<div id="progress" data-feature="scrollTools"></div>
+
+<button id="toTop" data-feature="scrollTools" aria-label="Back to top">
+  ↑
+</button>
+
+<!-- SHARED JAVASCRIPT -->
+<script src="script.js"></script>
+
+<script>
+/* =========================================
+   EXAM RESULTS PAGE JAVASCRIPT
+   ========================================= */
+
+/* Menu links */
+const SITE_LINKS = [
+  ["index.html#/home", "Home"],
+  ["index.html#/news", "News"],
+  ["index.html#/announcements", "Announcements"],
+  ["timetables.html", "Timetables"],
+  ["exam-results.html", "Exam Results", true],
+  ["index.html#/contact", "Contact"]
+];
+
+/*
+  DEMONSTRATION COURSE DATA
+
+  The BCS course units below are based on the
+  University of Ruhuna Faculty of Science
+  Student Handbook 2024/2025.
+
+  These are example selectable course units.
+*/
+
+const COURSES = {
+
+  "1-1": [
+    ["CSC1122", "Computer Systems I"],
+    ["CSC1113", "Programming Techniques"],
+    ["CSC113α", "Internet Services and Web Development"],
+    ["CSC1142", "System Analysis and Design"],
+    ["CSC1153", "Laboratory Assignments"],
+    ["AMT112β", "Mathematical Foundation of Computer Science"],
+    ["MAT112δ", "Differential Equations"],
+    ["MAT113δ", "Introductory Statistics"]
+  ],
+
+  "1-2": [
+    ["CSC1213", "Database Management Systems"],
+    ["CSC1223", "Data Structures and Algorithms"],
+    ["CSC1233", "Software Engineering"],
+    ["CSC1242", "Object Oriented System Development"],
+    ["CSC1251", "Computer Laboratory"],
+    ["MAT121β", "Algebra"],
+    ["MAT122β", "Calculus"]
+  ],
+
+  "2-1": [
+    ["CSC2113", "Data Communication and Computer Networks"],
+    ["CSC2123", "Object Oriented Programming"],
+    ["CSC2133", "Operating Systems"],
+    ["CSC2143", "Computer Graphics and Image Processing"],
+    ["AMT212β", "Computational Mathematics"],
+    ["MAT211β", "Linear Algebra I"],
+    ["PHY2112", "Electronics"]
+  ],
+
+  "2-2": [
+    ["CSC2213", "Rapid Application Development"],
+    ["CSC2222", "Computer System II"],
+    ["CSC2233", "Internet Programming"],
+    ["CSC2242", "Advanced Database Management"],
+    ["CSC2252", "Project Management"],
+    ["CSC2263", "Multimedia and Video Production"],
+    ["CSC2272", "Data and Network Security"],
+    ["MAT225β", "Mathematical Statistics I"]
+  ],
+
+  "3-1": [
+    ["CSC3113", "Group Project"],
+    ["CSC3122", "e-Commerce"],
+    ["MAT313β", "Mathematical Statistics II"]
+  ],
+
+  "3-2": [
+    ["CSC3216", "Industrial Training"]
+  ]
+
+};
+
+/* Degree programmes offered by each faculty */
+
+const DEGREE_PROGRAMS = {
+
+  engineering: [
+    "B.Sc.Eng. in Civil and Environmental Engineering",
+    "B.Sc.Eng. in Electrical and Information Engineering",
+    "B.Sc.Eng. in Mechanical and Manufacturing Engineering",
+    "B.Sc.Eng. in Marine Engineering and Naval Architecture"
+  ],
+
+  agriculture: [
+    "BSc. in Agriculture Resources Management & Technology",
+    "BSc. in Agri Business Management",
+    "B.Sc. in Green Technology"
+  ],
+
+  "allied-health": [
+    "B.Sc. in Nursing",
+    "Bachelor of Pharmacy",
+    "Bachelor of Medical Laboratory Sciences"
+  ],
+
+  fisheries: [
+    "B.Sc. in Fisheries and Marine Sciences",
+    "B.Sc. in Marine and Fresh Water Sciences"
+  ],
+
+  humanities: [
+    "Bachelor of Arts"
+  ],
+
+  management: [
+    "Bachelor of Business Administration (BBA)"
+  ],
+
+  medicine: [
+    "Bachelor of Medicine and Bachelor of Surgery (MBBS)"
+  ],
+
+  science: [
+    "B.Sc physical science",
+    "B.Sc biological science"
+  ],
+
+  technology: [
+    "Bachelor of Engineering Technology (BET)",
+    "Bachelor of Information and Communication Technology (BICT)",
+    "Bachelor of Bio Systems Technology (BBST)"
+  ]
+
+};
+
+
+
+/* Page elements */
+const faculty = document.getElementById("faculty");
+const degree = document.getElementById("degree");
+const level = document.getElementById("level");
+const semester = document.getElementById("semester");
+const subject = document.getElementById("subject");
+const subjectField = document.getElementById("subjectField");
+
+const resultForm = document.getElementById("resultForm");
+const resultsOutput = document.getElementById("resultsOutput");
+const resultsBody = document.getElementById("resultsBody");
+const errorMessage = document.getElementById("errorMessage");
+
+// Update degree programmes when faculty changes
+
+faculty.addEventListener("change", function() {
+
+  const selectedFaculty = faculty.value;
+
+  // Clear previous degree options
+  degree.innerHTML = '<option value="">Select degree</option>';
+
+  // Get degrees for the selected faculty
+  const availableDegrees = DEGREE_PROGRAMS[selectedFaculty] || [];
+
+  // Add the available degrees to the dropdown
+  availableDegrees.forEach(function(program) {
+
+    const option = document.createElement("option");
+
+    option.value = program;
+    option.textContent = program;
+
+    degree.appendChild(option);
+
+  });
+
+  // Hide previously displayed results
+  resultsOutput.classList.remove("show");
+
+});
+
+
+/* Update the subject list when level or semester changes */
+function updateSubjects() {
+
+  const key = level.value + "-" + semester.value;
+  const selectedCourses = COURSES[key] || [];
+
+  subject.innerHTML = '<option value="">Select a subject</option>';
+
+  selectedCourses.forEach(course => {
+
+    const option = document.createElement("option");
+
+    option.value = course[0];
+    option.textContent = course[0] + " - " + course[1];
+
+    subject.appendChild(option);
+
+  });
+
+  resultsOutput.classList.remove("show");
+}
+
+
+/* Change between all-subject and single-subject search */
+document.querySelectorAll('input[name="searchType"]').forEach(radio => {
+
+  radio.addEventListener("change", function() {
+
+    subjectField.style.display =
+      this.value === "one" ? "flex" : "none";
+
+    resultsOutput.classList.remove("show");
+
+  });
+
+});
+
+
+/* Refresh subjects when the user changes level or semester */
+level.addEventListener("change", updateSubjects);
+semester.addEventListener("change", updateSubjects);
+
+
+/* Sample grade information */
+const GRADE_POINTS = {
+  "A+": 4.0,
+  "A": 4.0,
+  "A-": 3.7,
+  "B+": 3.3,
+  "B": 3.0,
+  "B-": 2.7,
+  "C+": 2.3,
+  "C": 2.0,
+  "C-": 1.7,
+  "D": 1.0,
+  "F": 0.0
+};
+
+const GRADES = Object.keys(GRADE_POINTS);
+
+
+/* Generate consistent demonstration grades from the registration number */
+function sampleGrade(regNo, courseCode) {
+
+  let total = 0;
+  const value = regNo + courseCode;
+
+  for (let i = 0; i < value.length; i++) {
+    total += value.charCodeAt(i) * (i + 1);
+  }
+
+  return GRADES[total % GRADES.length];
+
+}
+
+
+/* Display results */
+resultForm.addEventListener("submit", function(event) {
+
+  event.preventDefault();
+
+  errorMessage.textContent = "";
+  resultsOutput.classList.remove("show");
+
+  const selectedFaculty = faculty.value;
+  const selectedDegree = degree.value;
+  const selectedLevel = level.value;
+  const selectedSemester = semester.value;
+
+  const regNo = document.getElementById("regNo").value.trim();
+
+  const searchType = document.querySelector(
+    'input[name="searchType"]:checked'
+  ).value;
+
+
+  /* Check required fields */
+  if (!selectedFaculty || !selectedDegree ||
+      !selectedLevel || !selectedSemester || !regNo) {
+
+    errorMessage.textContent = "Please complete all required fields.";
+    return;
+
+  }
+
+
+  const key = selectedLevel + "-" + selectedSemester;
+  let selectedCourses = COURSES[key] || [];
+
+
+  /* Check whether the selected level has course data */
+  if (selectedCourses.length === 0) {
+
+    errorMessage.textContent =
+      "No demonstration course units are currently available for this selection.";
+
+    return;
+
+  }
+
+
+  /* Search for one particular subject */
+  if (searchType === "one") {
+
+    if (!subject.value) {
+
+      errorMessage.textContent = "Please select a subject.";
+      return;
+
+    }
+
+    selectedCourses = selectedCourses.filter(
+      course => course[0] === subject.value
+    );
+
+  }
+
+
+  if (selectedCourses.length === 0) {
+
+    errorMessage.textContent = "No results found.";
+    return;
+
+  }
+
+
+  /* Create demonstration results */
+  let totalPoints = 0;
+
+  resultsBody.innerHTML = "";
+
+  selectedCourses.forEach(course => {
+
+    const grade = sampleGrade(regNo, course[0]);
+    const points = GRADE_POINTS[grade];
+
+    totalPoints += points;
+
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${course[0]}</td>
+      <td>${course[1]}</td>
+      <td><span class="grade">${grade}</span></td>
+      <td>${points.toFixed(2)}</td>
+    `;
+
+    resultsBody.appendChild(row);
+
+  });
+
+
+  /* Calculate a simple demonstration GPA */
+  const gpa = (totalPoints / selectedCourses.length).toFixed(2);
+
+
+  /* Update result summary */
+  document.getElementById("studentName").textContent =
+    "Student Results";
+
+  document.getElementById("studentDetails").textContent =
+    "Registration Number: " + regNo +
+    " | " + selectedFaculty +
+    " | " + "Level " + selectedLevel +
+    " | Semester " + selectedSemester;
+
+  document.getElementById("gpaValue").textContent = gpa;
+
+
+  /* Show the results */
+  resultsOutput.classList.add("show");
+
+  resultsOutput.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+
+});
+
+
+/* Build navigation like the timetable page */
+document.addEventListener("DOMContentLoaded", () => {
+
+  const link = ([href, label, here], i, kind) => {
+
+    if (kind === "drawer") {
+
+      return `<a href="${href}"
+        ${here ? 'data-nav="home"' : ""}
+        style="transition-delay:${(0.12 + i * 0.07).toFixed(2)}s">
+        ${label} <small>${String(i + 1).padStart(2, "0")}</small>
+      </a>`;
+
+    }
+
+    if (kind === "footer") {
+
+      return `<li><a href="${href}">${label}</a></li>`;
+
+    }
+
+    return `<a href="${href}" ${here ? 'data-nav="home"' : ""}>${label}</a>`;
+
+  };
+
+
+  document.getElementById("topnav").innerHTML =
+    SITE_LINKS.map((l, i) => link(l, i, "top")).join("");
+
+  document.getElementById("dnav").innerHTML =
+    SITE_LINKS.map((l, i) => link(l, i, "drawer")).join("");
+
+  document.getElementById("fPortal").innerHTML =
+    SITE_LINKS.map((l, i) => link(l, i, "footer")).join("");
+
+
+  TITLES.home = "Exam Results — University of Ruhuna";
+
+});
+</script>
+
+</body>
+</html>
