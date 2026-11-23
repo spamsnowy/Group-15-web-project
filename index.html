@@ -4,10 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>University of Ruhuna — News Portal</title>
-<meta name="description" content="News, announcements and campus life from the University of Ruhuna, Matara, Sri Lanka.">
+<meta name="description" content="News, announcements, timetables and campus life from the University of Ruhuna, Matara, Sri Lanka.">
+
+<!-- Font (Onest) from Google Fonts. If there is no internet the site uses a normal font instead. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- The ONE stylesheet of the whole site -->
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -15,40 +19,93 @@
 <!--
 =======================================================================
   UNIVERSITY OF RUHUNA NEWS PORTAL  —  READ ME FIRST
+  (Group 15 site + Ruhuna portal, merged into ONE of each file)
 =======================================================================
-  THE BASE (this file + styles.css + script.js)
-    index.html   header, footer, menu and the HOME page
-    styles.css   colours, sizes, animations
-    script.js    the core: settings, light/dark mode, sign in, admin panel
+  THE 3 FILES
+    index.html   (this file)  the TEXT of every page
+    styles.css                colours, sizes, animations
+    script.js                 settings, hero photos, news list, announcements list,
+                              timetable list, and the code that makes it all work
 
-  THE PARTS (one file each, one member each)  ->  modules/
-    news.js            News page + Home news section
-    announcements.js   Announcements page + notice board + ticker
-    contact.js         Contact page
-    _template.js       copy this to add a new page
+  TABLE OF CONTENTS OF THIS FILE  (press Ctrl+F and paste the name)
+    LOADING SCREEN
+    TOP BAR
+    PAGE: HOME            hero photo slideshow, ticker, quick links, news, notices,
+                          faculties, numbers
+    PAGE: NEWS
+    PAGE: ANNOUNCEMENTS
+    PAGE: TIMETABLES      lectures + exams, day list and week grid
+    PAGE: CONTACT
+    PAGE: ABOUT
+    FOOTER
+    RIGHT SLIDE MENU
+    POP-UPS
+    SCROLL TOOLS
+    SCRIPT LINK
 
-  Each part plugs itself in. Delete a part (and its <script> line at the
-  bottom of this file) and the rest of the site keeps working.
-  Photos go in the  Resource/images  folder.
+  HOW TO COPY / PASTE A PART
+    Every page and every block is wrapped in comments that say START and END.
+    Copy everything from START to END and paste it into the same place in
+    your own file. Nothing outside that block needs to change.
+
+  WHO EDITS WHAT (so git has no clashes)
+    Home ............. PAGE: HOME  + script.js  SECTION 1 (hero photos)
+    News ............. PAGE: NEWS  + script.js  SECTION 2
+    Announcements .... PAGE: ANNOUNCEMENTS + script.js SECTION 3
+    Timetables ....... PAGE: TIMETABLES + script.js SECTION 4
+    Contact / About .. PAGE: CONTACT / PAGE: ABOUT
+
+  PHOTOS go in  Resource/images/  (see the README.txt in each folder)
+    bigthing/       the big rectangle photos on the Home page (and page banners)
+    news/           news photos
+    announcement/   announcement photos
+    logo.png        the university logo
 =======================================================================
 -->
 
 
 <!-- =====================================================================
-     TOP BAR  (menu links are made automatically from the modules folder)
+     LOADING SCREEN  (the first thing visitors see for ~1.5 seconds)
+     EDIT: the university name and the small text under it.
+     LOGO: put your logo file at  Resource/images/logo.png  (no code change)
+     ===================================================================== -->
+<div id="loader" aria-hidden="true">
+  <div class="loader-box">
+    <span class="logo big" data-logo></span>          <!-- the logo picture -->
+    <b class="loader-title">University of Ruhuna</b>  <!-- EDIT: big text -->
+    <small class="loader-sub">News Portal</small>     <!-- EDIT: small text -->
+  </div>
+  <div class="track"><i></i></div>
+</div>
+
+
+<!-- =====================================================================
+     TOP BAR  (menu links in the middle, logo, light/dark button, menu button)
+     EDIT: to add a page here, copy one <a> line. data-nav must match the
+     page name in PAGES (script.js).
      ===================================================================== -->
 <header class="top" id="top">
-  <nav class="nav" id="topnav" aria-label="Primary"></nav>
+  <!-- Links shown on big screens (other pages are in the right slide menu) -->
+  <nav class="nav" aria-label="Primary">
+    <a href="#/home" data-nav="home">Home</a>
+    <a href="#/news" data-nav="news">News</a>
+    <a href="#/announcements" data-nav="announcements">Announcements</a>
+    <a href="#/timetables" data-nav="timetables">Timetables</a>
+  </nav>
+
+  <!-- Logo + name (click = go Home) -->
   <a href="#/home" class="brand" aria-label="University of Ruhuna home">
     <span class="logo" data-logo></span>
     <span><b>Ruhuna</b><small>University · Matara</small></span>
   </a>
+
   <div class="right">
     <!-- OPTIONAL: light/dark mode button (remove this button, or set features.modeButton = false in script.js) -->
     <button class="modebtn" id="modeBtn" data-feature="modeButton" aria-label="Switch between light and dark mode">
       <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
       <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
     </button>
+    <!-- Button that opens the right slide menu -->
     <button class="burger" id="burger" aria-label="Open menu"><i></i><i></i></button>
   </div>
 </header>
@@ -57,18 +114,19 @@
 <main>
 <div id="view">
 
+
 <!-- #####################################################################
      ##########################  PAGE: HOME  START  ######################
-     Home is part of the BASE. Other pages live in the modules folder.
-     Empty  data-slot="..."  spots are filled in by the module files.
      ##################################################################### -->
 <section class="page" data-page="home">
 
-  <!-- ---------- HOME: HERO (big photo at the top) ---------- -->
+  <!-- ---------- HOME: HERO (the BIG RECTANGLE with the changing photos) ----------
+       The photos are NOT written here. They come from  SETTINGS.heroSlides  in
+       script.js (SECTION 1). To change / add / remove a photo, edit that list. -->
   <section class="hero">
-    <!-- Background photo: Resource/images/hero.jpg -->
     <div class="plate"><div class="inner" data-parallax>
-      <img src="3.jpg" alt="University of Ruhuna campus" fetchpriority="high">
+      <!-- script.js puts one <img> per photo in here and fades between them -->
+      <div class="slides" id="heroSlides"></div>
     </div></div>
 
     <h1 class="words" data-words>Ruhuna University News Portal</h1>   <!-- EDIT: giant title -->
@@ -85,6 +143,10 @@
         </div>
       </div>
     </div>
+
+    <!-- Little progress bars + "1 / 4" counter for the photo slideshow (display only, filled by script.js).
+         The photos change by themselves; there are no buttons. -->
+    <div class="hctrl" id="heroDots" aria-hidden="true"></div>
   </section>
 
   <!-- ==== OPTIONAL FEATURE: NEWS TICKER (scrolling urgent/important notices) ====
@@ -98,10 +160,13 @@
 
   <!-- ==== OPTIONAL FEATURE: QUICK LINKS (4 big buttons) ====
        EDIT: change the names and put the real web address in each href="...".
+       The Timetables button opens the Timetables page of this site.
        To remove: delete this block, or set features.quickLinks = false. -->
   <div class="quick" data-feature="quickLinks">
     <a class="rv" href="http://www.ruh.ac.lk" target="_blank" rel="noopener"><span>Student portal<small>Your account</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     <a class="rv" href="http://www.ruh.ac.lk" target="_blank" rel="noopener" style="transition-delay:.08s"><span>Library<small>Books and journals</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    <a class="rv" href="http://www.ruh.ac.lk" target="_blank" rel="noopener" style="transition-delay:.16s"><span>Exam results<small>Check your marks</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    <a class="rv" href="#/timetables" style="transition-delay:.24s"><span>Timetables<small>Lectures and exams</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     <a class="rv" href="exam-results.html" style="transition-delay:.16s"><span>Exam results<small>Check your marks</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a> 
     <a class="rv" href="timetables.html" style="transition-delay:.24s"><span>Timetables<small>Lectures and exams</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
   </div>
@@ -110,37 +175,40 @@
   <!-- ---------- HOME: LATEST NEWS (3 newest, comes from script.js NEWS list) ---------- -->
   <section class="s surface pad mt3" style="padding-top:5rem">
     <div class="rv"><span class="eyebrow">Latest news</span><h2 class="t">Fresh from<br>campus</h2></div>
+    <!-- Only visible when an administrator is signed in -->
     <div class="adminbar" data-admin-only hidden>
       <b>Admin mode</b><span>Add or remove content, or change the site colours.</span><span class="sp"></span>
       <button class="pill gold" data-act="admin-news">+ News</button>
       <button class="pill gold" data-act="admin-ann">+ Announcement</button>
       <button class="pill gold" data-act="admin-theme">Colours</button>
     </div>
-    <ul class="gridn" id="homeNews"></ul>
+    <ul class="gridn" id="homeNews"></ul>   <!-- news cards, made automatically -->
     <div style="margin-top:2.5rem"><a class="pill solid" href="#/news">All news <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
   </section>
 
   <!-- ---------- HOME: ANNOUNCEMENTS (3 newest, comes from script.js ANNOUNCEMENTS list) ---------- -->
   <section class="s pad" style="background:var(--background)">
     <div class="rv"><span class="eyebrow">Notice board</span><h2 class="t">Announcements</h2></div>
-    <ul class="alist" id="homeAnn"></ul>
+    <ul class="alist" id="homeAnn"></ul>   <!-- made automatically -->
     <div style="margin-top:2.5rem"><a class="pill outline" href="#/announcements">See all notices <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
   </section>
 
-  <!-- ---------- HOME: FACULTIES (EDIT: copy one <li> block to add a faculty) ---------- -->
+  <!-- ---------- HOME: FACULTIES (EDIT: copy one <li> block to add a faculty) ----------
+       Text for Medicine and Science was written by the group (kept as it was). -->
   <section class="s pad surface mt3" style="padding-top:6rem">
     <div class="rv"><span class="eyebrow">Faculties</span><h2 class="t">Many fields,<br>one university</h2></div>
     <ul class="fl">
-      <li class="rv"><div class="frow"><span class="n">01</span><span class="m"><h3>Agriculture</h3><p>Crops, animal science, food and sustainable farming.</p></span></div></li>
-      <li class="rv"><div class="frow"><span class="n">02</span><span class="m"><h3>Engineering</h3><p>Civil, electrical, mechanical and more, built at Hapugala.</p></span></div></li>
-      <li class="rv"><div class="frow"><span class="n">03</span><span class="m"><h3>Fisheries &amp; Marine Sciences</h3><p>Ocean and coastal research on the southern shore.</p></span></div></li>
-      <li class="rv"><div class="frow"><span class="n">04</span><span class="m"><h3>Humanities &amp; Social Sciences</h3><p>Languages, society, culture and public policy.</p></span></div></li>
-      <li class="rv"><div class="frow"><span class="n">05</span><span class="m"><h3>Medicine</h3><p>Advancing healthcare, clinical studies, and medical sciences.</p></span></div></li>
-      <li class="rv"><div class="frow"><span class="n">06</span><span class="m"><h3>Science</h3><p>Exploring mathematics, physics, chemistry, and modern laboratory research.</p></span></div></li>
+      <li class="rv"><a class="frow" href="#/about"><span class="n">01</span><span class="m"><h3>Agriculture</h3><p>Crops, animal science, food and sustainable farming.</p></span><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
+      <li class="rv"><a class="frow" href="#/about"><span class="n">02</span><span class="m"><h3>Engineering</h3><p>Civil, electrical, mechanical and more, built at Hapugala.</p></span><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
+      <li class="rv"><a class="frow" href="#/about"><span class="n">03</span><span class="m"><h3>Fisheries &amp; Marine Sciences</h3><p>Ocean and coastal research on the southern shore.</p></span><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
+      <li class="rv"><a class="frow" href="#/about"><span class="n">04</span><span class="m"><h3>Humanities &amp; Social Sciences</h3><p>Languages, society, culture and public policy.</p></span><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
+      <li class="rv"><a class="frow" href="#/about"><span class="n">05</span><span class="m"><h3>Medicine</h3><p>Advancing healthcare, clinical studies, and medical sciences.</p></span><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
+      <li class="rv"><a class="frow" href="#/about"><span class="n">06</span><span class="m"><h3>Science</h3><p>Exploring mathematics, physics, chemistry, and modern laboratory research.</p></span><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
     </ul>
+    <div style="margin-top:2.5rem"><a class="pill solid" href="#/about">About Ruhuna <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
   </section>
 
-  <!-- ------x---- HOME: NUMBERS (EDIT: change the big numbers and labels) ---------- -->
+  <!-- ---------- HOME: NUMBERS (EDIT: change the big numbers and labels) ---------- -->
   <section class="s dark pad mt3">
     <div class="rv"><span class="eyebrow light">By the numbers</span><h2 class="t">A university<br>that grows</h2></div>
     <dl class="stats">
@@ -151,9 +219,10 @@
     </dl>
   </section>
 
-
 </section>
 <!-- ##########################  PAGE: HOME  END  ######################## -->
+
+
 
 <!-- #####################################################################
      ########################  PAGE: NEWS  START  ########################
@@ -162,14 +231,16 @@
      ##################################################################### -->
 <section class="page" data-page="news">
 
+  <!-- Banner at the top. EDIT: the photo (src), the title and the sentence -->
   <section class="phero">
-    <div class="plate"><div class="inner" data-parallax><img src="Resource/images/news-banner.JPG" alt="" style="object-position:70% 40%"></div></div>
+    <div class="plate"><div class="inner" data-parallax><img src="Resource/images/bigthing/4.jpg" alt="" style="object-position:70% 40%"></div></div>
     <span class="eyebrow light">University news</span>
     <h1 class="words" data-words>News</h1>
     <p>Research, campus life, academics and achievements from across the University of Ruhuna.</p>
   </section>
 
   <section class="s pad" style="background:var(--background);margin-top:.75rem">
+    <!-- Only visible when an administrator is signed in -->
     <div class="adminbar" data-admin-only hidden>
       <b>Admin mode</b><span>Add or remove news.</span><span class="sp"></span>
       <button class="pill gold" data-act="admin-news">+ News</button>
@@ -184,11 +255,201 @@
 </section>
 <!-- ########################  PAGE: NEWS  END  ########################## -->
 
+
+
+<!-- #####################################################################
+     ##################  PAGE: ANNOUNCEMENTS  START  #####################
+     The notices come from the ANNOUNCEMENTS list in script.js (section 3).
+     ##################################################################### -->
+<section class="page" data-page="announcements">
+
+  <!-- Banner at the top. EDIT: photo, title, sentence -->
+  <section class="phero">
+    <div class="plate"><div class="inner" data-parallax><img src="Resource/images/bigthing/3.jpg" alt="" style="object-position:20% 60%"></div></div>
+    <span class="eyebrow light">Notice board</span>
+    <h1 class="words" data-words>Announcements</h1>
+    <p>Official notices for students and staff. No sign-in needed to read them.</p>
+  </section>
+
+  <section class="s pad" style="background:var(--background);margin-top:.75rem">
+    <!-- Only visible when an administrator is signed in -->
+    <div class="adminbar" data-admin-only hidden>
+      <b>Admin mode</b><span>Add or remove announcements.</span><span class="sp"></span>
+      <button class="pill gold" data-act="admin-ann">+ Announcement</button>
+      <button class="pill gold" data-act="admin-theme">Colours</button>
+    </div>
+    <!-- OPTIONAL FEATURE: SEARCH BOX (remove this block or set features.search = false) -->
+    <label class="search" data-feature="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="qAnn" type="search" placeholder="Search announcements…" autocomplete="off"></label>
+    <ul class="alist" id="annList" style="margin-top:2rem"></ul>   <!-- made automatically -->
+  </section>
+
+</section>
+<!-- ##################  PAGE: ANNOUNCEMENTS  END  ####################### -->
+
+
+
+<!-- #####################################################################
+     ####################  PAGE: TIMETABLES  START  ######################
+     (This page was timetables.html in the old Group 15 site.)
+     The lectures and exams are NOT written here. They come from the
+     TIMETABLE lists in script.js (SECTION 4). This file only has the empty
+     boxes; script.js fills every box that has an id="tt..." below.
+     ##################################################################### -->
+<section class="page" data-page="timetables">
+
+  <!-- Banner at the top. EDIT: photo, title, sentence -->
+  <section class="phero">
+    <div class="plate"><div class="inner" data-parallax><img src="Resource/images/bigthing/3.jpg" alt="" style="object-position:50% 70%"></div></div>
+    <span class="eyebrow light">Lectures &amp; exams</span>
+    <h1 class="words" data-words>Timetables</h1>
+    <p>Pick your faculty and year to see this week's lectures, practicals and the exams coming up.</p>
+  </section>
+
+  <section class="s pad" style="background:var(--background);margin-top:.75rem" id="ttPage">
+
+    <!-- ADMIN ONLY: add / save buttons (visible after signing in as administrator) -->
+    <div class="adminbar" data-admin-only hidden>
+      <b>Administrator tools</b><span>Add timetable entries, or delete them from the cards below.</span><span class="sp"></span>
+      <button class="pill solid" type="button" data-act="admin-lecture">+ Add lecture</button>
+      <button class="pill gold" type="button" data-act="admin-exam">+ Add exam</button>
+      <button class="pill outline" type="button" data-act="admin-save">Save code</button>
+    </div>
+
+    <!-- CONTROL PANEL: choose Lectures/Exams, Day/Week view, search and filters -->
+    <div class="tt-panel rv">
+      <div class="tt-row">
+        <!-- Lectures | Exams switch -->
+        <div class="seg tt-seg" id="ttType" role="tablist" aria-label="Timetable type"></div>
+        <!-- Day list | Week grid switch (only for lectures) -->
+        <div class="seg tt-seg" id="ttView" role="tablist" aria-label="View"></div>
+        <!-- Search box (OPTIONAL: remove this label or set features.search = false) -->
+        <label class="search tt-search" data-feature="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="ttQ" type="search" placeholder="Search course, room or lecturer" aria-label="Search timetable" autocomplete="off"></label>
+      </div>
+      <div class="tt-filter"><span class="tt-lbl">Faculty</span><div class="filters" id="ttFac"></div></div>
+      <div class="tt-filter"><span class="tt-lbl">Year</span><div class="filters" id="ttYear"></div></div>
+      <div class="tt-filter" id="ttDayRow"><span class="tt-lbl">Day</span><div class="filters" id="ttDay"></div></div>
+    </div>
+
+    <!-- The timetable itself (cards or week grid) -->
+    <div id="ttBody" class="tt-body"></div>
+    <!-- Small colour legend under the week grid -->
+    <p class="tt-note" id="ttNote"></p>
+  </section>
+
+  <!-- AT A GLANCE: four big numbers about the selected timetable -->
+  <section class="s dark pad mt3">
+    <div class="rv"><span class="eyebrow light">At a glance</span><h2 class="t">Your week,<br>in numbers</h2></div>
+    <dl class="stats" id="ttStats"></dl>
+  </section>
+
+</section>
+<!-- ####################  PAGE: TIMETABLES  END  ######################## -->
+
+
+
+<!-- #####################################################################
+     #######################  PAGE: CONTACT  START  ######################
+     ##################################################################### -->
+<section class="page" data-page="contact">
+
+  <!-- Banner at the top. EDIT: photo, title, sentence -->
+  <section class="phero">
+    <div class="plate"><div class="inner" data-parallax><img src="Resource/images/bigthing/4.jpg" alt="" style="object-position:90% 70%"></div></div>
+    <span class="eyebrow light">Get in touch</span>
+    <h1 class="words" data-words>Contact</h1>
+    <p>Questions about the portal or a story to share? Reach the university or send us a message.</p>
+  </section>
+
+  <section class="s pad" style="background:var(--background);margin-top:.75rem">
+    <div class="two">
+
+      <!-- CONTACT INFO  (EDIT: address, phone, fax, website) -->
+      <div class="info rv">
+        <div><small>Address</small><span>University of Ruhuna, Wellamadama, Matara, Sri Lanka</span></div>
+        <div><small>Telephone</small><a href="tel:+94412222681">+94 (41) 222 2681-2</a></div>
+        <div><small>Fax</small><span>+94 (41) 222 2683</span></div>
+        <div><small>Website</small><a href="http://www.ruh.ac.lk" target="_blank" rel="noopener">www.ruh.ac.lk</a></div>
+        <!-- To add an email, copy one line above, e.g.:
+             <div><small>Email</small><a href="mailto:someone@ruh.ac.lk">someone@ruh.ac.lk</a></div> -->
+      </div>
+
+      <!-- CONTACT FORM  (demo only: it does not send anything yet) -->
+      <div class="rv" style="transition-delay:.12s" id="cWrap">
+        <form class="f" id="fContact" novalidate>
+          <div class="field"><label for="cn">Full name</label><input id="cn" placeholder="Nimal Perera"></div>
+          <div class="field"><label for="ce">Email</label><input id="ce" type="email" placeholder="you@email.com"></div>
+          <div class="field"><label for="cm">Message</label><textarea id="cm" rows="5" placeholder="How can we help?"></textarea></div>
+          <div class="err" id="cErr"></div>
+          <button class="pill solid" type="submit" style="align-self:flex-start">Send message</button>
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+</section>
+<!-- #######################  PAGE: CONTACT  END  ######################## -->
+
+
+
+<!-- #####################################################################
+     ########################  PAGE: ABOUT  START  #######################
+     ##################################################################### -->
+<section class="page" data-page="about">
+
+  <!-- Banner at the top. EDIT: photo, title, sentence -->
+  <section class="phero">
+    <div class="plate"><div class="inner" data-parallax><img src="Resource/images/bigthing/1.jpg" alt="" style="object-position:50% 50%"></div></div>
+    <span class="eyebrow light">Our story</span>
+    <h1 class="words" data-words>About Ruhuna</h1>
+    <p>Established in 1978 and a full university since 1984, in Matara, southern Sri Lanka.</p>
+  </section>
+
+  <!-- ABOUT: HISTORY text + photo (EDIT: the photo file in src) -->
+  <section class="s pad" style="background:var(--background);margin-top:.75rem">
+    <div class="two">
+      <div class="prose rv">
+        <span class="eyebrow">History</span>
+        <h2 class="t" style="margin-bottom:1.5rem">The university of the south</h2>
+        <p>The University of Ruhuna opened as Ruhuna University College in 1978 at Meddawatta, Matara, and became a full university in 1984. It remains the only university in Sri Lanka's southern region.</p>
+        <p>The main campus at Wellamadama, Matara covers about 72 acres, with faculties and teaching hospitals across the southern province.</p>
+        <p>Its motto, <em>Paññāya Narānaṃ Ratanaṃ</em>, means wisdom is the jewel of humankind.</p>
+      </div>
+      <div class="photo rv"><img class="ph" src="Resource/images/bigthing/1.jpg" alt="University of Ruhuna"></div>
+    </div>
+
+    <!-- ABOUT: THREE SMALL BOXES (EDIT text) -->
+    <div class="vm">
+      <div class="rv"><h3>Motto</h3><p>Paññāya Narānaṃ Ratanaṃ — wisdom is the jewel of people.</p></div>
+      <div class="rv" style="transition-delay:.1s"><h3>Colours</h3><p>Yellow and brown, reflected throughout this portal.</p></div>
+      <div class="rv" style="transition-delay:.2s"><h3>Languages</h3><p>Sinhala, Tamil and English.</p></div>
+    </div>
+  </section>
+
+  <!-- ABOUT: ALL FACULTIES (EDIT: copy one <li> block to add a faculty) -->
+  <section class="s surface pad mt3">
+    <div class="rv"><span class="eyebrow">Faculties</span><h2 class="t">Where you can study</h2></div>
+    <ul class="fl">
+      <li class="rv"><div class="frow"><span class="n">01</span><span class="m"><h3>Agriculture</h3><p>Crops, animal science, food and sustainable farming.</p></span></div></li>
+      <li class="rv"><div class="frow"><span class="n">02</span><span class="m"><h3>Engineering</h3><p>Civil, electrical, mechanical and more, built at Hapugala.</p></span></div></li>
+      <li class="rv"><div class="frow"><span class="n">03</span><span class="m"><h3>Fisheries &amp; Marine Sciences</h3><p>Ocean and coastal research on the southern shore.</p></span></div></li>
+      <li class="rv"><div class="frow"><span class="n">04</span><span class="m"><h3>Humanities &amp; Social Sciences</h3><p>Languages, society, culture and public policy.</p></span></div></li>
+      <li class="rv"><div class="frow"><span class="n">05</span><span class="m"><h3>Management &amp; Finance</h3><p>Business, accounting and entrepreneurship.</p></span></div></li>
+      <li class="rv"><div class="frow"><span class="n">06</span><span class="m"><h3>Medicine</h3><p>Advancing healthcare, clinical studies, and medical sciences, with teaching hospitals in Galle.</p></span></div></li>
+      <li class="rv"><div class="frow"><span class="n">07</span><span class="m"><h3>Science</h3><p>Exploring mathematics, physics, chemistry, and modern laboratory research.</p></span></div></li>
+      <li class="rv"><div class="frow"><span class="n">08</span><span class="m"><h3>Technology</h3><p>Applied technology programmes for modern industry.</p></span></div></li>
+    </ul>
+  </section>
+
+</section>
+<!-- ########################  PAGE: ABOUT  END  ######################### -->
+
 </div><!-- end #view -->
 
 
 <!-- =====================================================================
      FOOTER  (shown at the bottom of every page)
+     EDIT: contact lines and the small text
      ===================================================================== -->
 <footer class="ft mt3">
   <!-- ==== OPTIONAL FEATURE: FOOTER SCROLLING TEXT (like the GRAVITY site) ====
@@ -201,36 +462,40 @@
       <div class="mq-set">
         <div class="mq-item"><span>University of Ruhuna</span><i class="mq-dot"></i></div>
         <div class="mq-item"><span>Stay informed</span><i class="mq-dot"></i></div>
-        <div class="mq-item"><span>Paññāya Narānaṃ Ratanaṃ</span><i class="mq-dot"></i></div>
         <div class="mq-item"><span>News &amp; announcements</span><i class="mq-dot"></i></div>
       </div>
     </div>
   </div>
   <!-- ==== END OPTIONAL: FOOTER SCROLLING TEXT ==== -->
 
+  <!-- Big "Contact us" call-to-action -->
   <div class="cta">
     <div>
       <span class="eyebrow light">Stay connected</span>
       <p><span class="clip rv-line"><span>Know what's</span></span><span class="clip rv-line"><span>happening</span></span></p>
     </div>
-    <a class="pill light rv" data-needs="contact" href="#/contact">Contact us <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    <a class="pill light rv" href="#/contact">Contact us <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
   </div>
+
+  <!-- Three footer columns: about + address, portal links, university links -->
   <div class="cols">
     <div>
       <div class="brand"><span class="logo" data-logo></span><span><b style="font-size:1.1rem">Ruhuna</b><small>University · Matara</small></span></div>
       <p class="blurb">The only university in Sri Lanka's southern region — news, notices and campus stories from the University of Ruhuna.</p>
-      <address><span>Wellamadama, Matara, Sri Lanka</span><a href="tel:+94412222681">+94 (41) 222 2681-2</a><a href="http://www.ruh.ac.lk" target="_blank" rel="noopener">www.ruh.ac.lk</a></address>
+      <address><span>Wellamadama, Matara, Sri Lanka</span><a href="tel:+94412222681">+94-(41)-222-2681-2</a><a href="http://www.ruh.ac.lk" target="_blank" rel="noopener">www.ruh.ac.lk</a></address>
     </div>
-    <nav><h4>Portal</h4><ul id="fPortal"></ul></nav>
-    <nav><h4>University</h4><ul><li><a href="http://www.ruh.ac.lk" target="_blank" rel="noopener">Official site</a></li></ul></nav>
+    <nav><h4>Portal</h4><ul><li><a href="#/home">Home</a></li><li><a href="#/news">News</a></li><li><a href="#/announcements">Announcements</a></li><li><a href="#/timetables">Timetables</a></li></ul></nav>
+    <nav><h4>University</h4><ul><li><a href="#/about">About</a></li><li><a href="#/contact">Contact</a></li><li><a href="http://www.ruh.ac.lk" target="_blank" rel="noopener">Official site</a></li></ul></nav>
   </div>
-  <div class="bar"><span>© 2026 University of Ruhuna News Portal. Sample content for demonstration.</span><span>Paññāya Narānaṃ Ratanaṃ</span></div>
+  <div class="bar"><span>© 2026 University of Ruhuna News Portal. Sample content for demonstration.</span></div>
 </footer>
 </main>
 
 
 <!-- =====================================================================
      RIGHT SLIDE MENU (opens from the button in the top right)
+     To add a page: add a <section class="page" data-page="NAME"> above,
+     a link here, and add "NAME" to PAGES in script.js.
      ===================================================================== -->
 <div class="drawer" id="drawer">
   <div class="bk" data-close="drawer"></div>
@@ -239,7 +504,15 @@
       <div class="brand"><span class="logo" data-logo></span><span><b>Ruhuna</b><small>University · Matara</small></span></div>
       <button class="xbtn" data-close="drawer" aria-label="Close menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
-    <nav id="dnav"></nav>
+    <nav id="dnav">
+      <a href="#/home" data-nav="home" style="transition-delay:.12s">Home <small>01</small></a>
+      <a href="#/news" data-nav="news" style="transition-delay:.19s">News <small>02</small></a>
+      <a href="#/announcements" data-nav="announcements" style="transition-delay:.26s">Announcements <small>03</small></a>
+      <a href="#/timetables" data-nav="timetables" style="transition-delay:.33s">Timetables <small>04</small></a>
+      <a href="#/contact" data-nav="contact" style="transition-delay:.4s">Contact <small>05</small></a>
+      <a href="#/about" data-nav="about" style="transition-delay:.47s">About <small>06</small></a>
+    </nav>
+    <!-- Sign in / user box (filled by script.js) -->
     <div class="foot" id="dfoot"></div>
   </aside>
 </div>
@@ -248,12 +521,13 @@
 <!-- NOTE: data-lenis-prevent on the pop-ups lets them scroll with the mouse wheel
      even though the page behind is locked. Keep it on any new scrollable pop-up. -->
 <!-- =====================================================================
-     GLASS POP-UPS (filled by script.js: sign in, admin panel, read article)
+     GLASS POP-UPS (empty here; script.js fills them: sign in, admin panel,
+     read article / timetable details)
      ===================================================================== -->
 <div class="modal" id="mAuth"><div class="bk" data-close="mAuth"></div><div class="panel" role="dialog" aria-modal="true" aria-label="Sign in" id="pAuth" data-lenis-prevent></div></div>
 <div class="modal" id="mAdmin"><div class="bk" data-close="mAdmin"></div><div class="panel wide" role="dialog" aria-modal="true" aria-label="Admin panel" id="pAdmin" data-lenis-prevent></div></div>
-<div class="modal" id="mRead"><div class="bk" data-close="mRead"></div><div class="panel wide" role="dialog" aria-modal="true" aria-label="Article" id="pRead" data-lenis-prevent></div></div>
-<div id="toast" role="status"></div>
+<div class="modal" id="mRead"><div class="bk" data-close="mRead"></div><div class="panel wide" role="dialog" aria-modal="true" aria-label="Details" id="pRead" data-lenis-prevent></div></div>
+<div id="toast" role="status"></div>   <!-- the small message at the bottom of the screen -->
 
 <!-- ==== OPTIONAL FEATURE: SCROLL TOOLS (thin progress line on top + back-to-top button) ====
      To remove: delete these two lines, or set features.scrollTools = false. -->
@@ -263,12 +537,9 @@
 
 
 <!-- =====================================================================
-     SCRIPTS. Order matters: the core first, then one line per module.
-     To remove a part of the site, delete its line. To add one, add a line.
+     SCRIPT LINK — the ONE JavaScript file of the whole site.
+     Keep this as the last line, after everything above.
      ===================================================================== -->
 <script src="script.js"></script>
-<script src="modules/news.js"></script>
-<script src="modules/announcements.js"></script>
-<script src="modules/contact.js"></script>
 </body>
 </html>

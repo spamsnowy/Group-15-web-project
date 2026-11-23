@@ -1,3 +1,28 @@
+/* =======================================================================
+   UNIVERSITY OF RUHUNA NEWS PORTAL — styles.css
+   (Group 15 site + Ruhuna portal merged into ONE stylesheet)
+
+   TABLE OF CONTENTS  (press Ctrl+F and paste the name)
+     THEME COLOURS ........ the 3 main colours + light / dark mode
+     BASICS ............... fonts, sizes, reset
+     REVEAL ANIMATIONS .... things that slide in when you scroll
+     LOADING SCREEN
+     LOGO
+     HEADER (TOP BAR)
+     HOME HERO ............ the big rectangle (see also: HERO SLIDESHOW at the end)
+     BUTTONS, HEADINGS, SECTIONS
+     NEWS CARDS, FILTERS, ANNOUNCEMENTS, NUMBERS
+     CONTACT, ABOUT, FORMS
+     POP-UPS, SIDE MENU, ADMIN BAR, FOOTER
+     OPTIONAL FEATURES .... ticker, quick links, search, scroll tools, footer text strip
+     ADMIN PANEL > LOOK
+     HOME HERO SLIDESHOW .. photo fade, arrows, bars  (NEW)
+     TIMETABLES PAGE ...... panel, cards, week grid   (NEW)
+
+   Every block below starts with a small comment saying what it styles.
+   Copy a block from its comment to the next comment to move it to another file.
+   ======================================================================= */
+
 :root {
   /* =====================================================================
      THEME COLOURS — the 3 main colours of the whole site.
@@ -175,11 +200,57 @@ main {
   opacity: 1;
 }
 
-
-
-
-
-
+/* ---------- loader ---------- */
+#loader {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: var(--brand-deep);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  transition: transform 0.85s cubic-bezier(0.65, 0, 0.35, 1);
+}
+#loader.out {
+  transform: translateY(-105%);
+}
+#loader .mark {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: rise 0.9s 0.1s forwards cubic-bezier(0.16, 1, 0.3, 1);
+}
+#loader .mark b {
+  font-weight: 500;
+  font-size: 1.5rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.track {
+  width: 10rem;
+  height: 1px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+.track i {
+  display: block;
+  height: 100%;
+  background: var(--brand-light);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: fill 1.28s 0.12s forwards cubic-bezier(0.65, 0, 0.35, 1);
+}
+@keyframes fill {
+  to {
+    transform: scaleX(1);
+  }
+}
 @keyframes rise {
   to {
     opacity: 1;
@@ -410,6 +481,7 @@ header.top .right {
     align-items: flex-end;
   }
 }
+/* the two-line tagline in the hero (Stay Informed, Stay Ahead) */
 .tag {
   font-size: 2.4rem;
   font-weight: 500;
@@ -430,6 +502,7 @@ header.top .right {
   -webkit-backdrop-filter: blur(18px) saturate(1.4);
   box-shadow: 0 12px 40px rgba(26, 15, 8, 0.25);
 }
+/* small glass card in the hero that rotates the 3 latest news */
 .slider {
   display: none;
   width: 17rem;
@@ -528,6 +601,7 @@ section.s {
   position: relative;
   isolation: isolate;
 }
+/* small label above a heading (e.g. "Latest news") */
 .eyebrow {
   display: inline-flex;
   align-items: center;
@@ -551,6 +625,7 @@ section.s {
 .eyebrow.light::before {
   background: var(--brand-light);
 }
+/* big section heading */
 h2.t {
   font-size: 3rem;
   font-weight: 500;
@@ -577,6 +652,7 @@ h2.t {
   margin-top: 0.75rem;
 }
 
+/* buttons (round pill shape): .solid  .gold  .outline  .light */
 .pill {
   display: inline-flex;
   align-items: center;
@@ -628,6 +704,7 @@ h2.t {
   background: var(--ink);
   color: var(--on-ink);
 }
+/* round arrow buttons */
 .arrow {
   width: 3rem;
   height: 3rem;
@@ -785,6 +862,7 @@ ul.fl li:last-child .frow {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+/* ONE news card (photo + category + title + text + date) */
 .ncard {
   display: flex;
   flex-direction: column;
@@ -821,6 +899,7 @@ ul.fl li:last-child .frow {
   gap: 0.75rem;
   flex: 1;
 }
+/* small category label on a news card */
 .cat {
   align-self: flex-start;
   font-size: 0.65rem;
@@ -853,6 +932,7 @@ ul.fl li:last-child .frow {
   color: var(--ink-soft);
   padding-top: 0.5rem;
 }
+/* round delete button shown to administrators on cards */
 .del {
   position: absolute;
   top: 0.75rem;
@@ -872,6 +952,7 @@ ul.fl li:last-child .frow {
 .del:hover {
   background: #b3261e;
 }
+/* row of filter buttons (categories, faculty, year, day) */
 .filters {
   display: flex;
   flex-wrap: wrap;
@@ -902,6 +983,7 @@ ul.fl li:last-child .frow {
   flex-direction: column;
   gap: 1rem;
 }
+/* ONE announcement row */
 .aitem {
   display: flex;
   gap: 1.5rem;
@@ -947,6 +1029,7 @@ ul.fl li:last-child .frow {
   line-height: 1.55;
   margin-top: 0.4rem;
 }
+/* priority tag: .urgent (red)  .important (gold)  .general (grey) */
 .pri {
   display: inline-block;
   font-size: 0.62rem;
@@ -1174,6 +1257,7 @@ form.f {
   max-width: 32rem;
   max-height: 92svh;
   overflow-y: auto;
+  overflow-x: hidden; /* only up/down scrolling inside pop-ups, never sideways */
   border-radius: var(--radius-card-lg);
   padding: 1.5rem;
   color: #fff;
@@ -1459,6 +1543,7 @@ form.f {
   flex-direction: column;
   gap: 1rem;
 }
+/* signed-in user box inside the right slide menu */
 .userbox {
   display: flex;
   align-items: center;
@@ -1601,6 +1686,7 @@ footer.ft {
   }
 }
 
+/* small message that pops up at the bottom of the screen */
 #toast {
   position: fixed;
   left: 50%;
@@ -1622,6 +1708,7 @@ footer.ft {
   opacity: 1;
   transform: translate(-50%, 0);
 }
+/* the area where pages swap (fade between pages) */
 #view {
   transition:
     opacity 0.35s,
@@ -1631,6 +1718,7 @@ footer.ft {
   opacity: 0;
   transform: translateY(14px);
 }
+/* the "Nothing found" box */
 .empty {
   margin-top: 3rem;
   padding: 2.5rem;
@@ -1667,8 +1755,33 @@ footer.ft {
   display: block;
 }
 
-
-
+/* loading screen (text + logo are edited in index.html) */
+#loader .loader-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: rise 0.9s 0.1s forwards cubic-bezier(0.16, 1, 0.3, 1);
+}
+#loader .logo.big {
+  width: 5.5rem;
+  height: 5.5rem;
+}
+.loader-title {
+  font-weight: 500;
+  font-size: 1.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.loader-sub {
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
 
 /* big square card on the home hero: photo shape (rounded or circle) */
 
@@ -2325,4 +2438,558 @@ body {
 }
 .drawer aside {
   overflow-y: auto;
+}
+
+
+/* =====================================================================
+   HOME HERO — THE BIG RECTANGLE WITH CHANGING PHOTOS
+   The photos are listed in script.js  SETTINGS.heroSlides.
+   COPY this whole block (to the next big banner) to reuse the slideshow.
+   ===================================================================== */
+
+/* the box that holds all the photos, one on top of the other */
+.plate .slides {
+  position: absolute;
+  inset: 0;
+}
+/* every photo is invisible until it gets the class "on" (script.js adds it) */
+.plate .slides .slide {
+  opacity: 0;
+  transition: opacity 1.6s ease;
+}
+/* the photo that is showing: fades in and slowly zooms out (Ken Burns effect) */
+.plate .slides .slide.on {
+  opacity: 1;
+  animation: heroZoom 9s ease-out forwards;
+}
+@keyframes heroZoom {
+  from {
+    transform: scale(1.1);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* the little bars + "01 / 04" counter at the bottom of the rectangle */
+.hctrl {
+  pointer-events: none; /* display only */
+  position: absolute;
+  left: 50%;
+  bottom: 0.55rem;
+  z-index: 3;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.hctrl > span:not(.hnum) {
+  padding: 0.55rem 0.1rem;
+}
+.hctrl > span:not(.hnum) i {
+  position: relative;
+  display: block;
+  width: 2.2rem;
+  height: 3px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.35);
+}
+/* the white fill that grows while the photo is showing (width is set by script.js through --p) */
+.hctrl > span i::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.hctrl > span.on i::after {
+  transform: scaleX(var(--p, 0));
+  transition: transform 0.1s linear;
+}
+.hctrl .hnum {
+  white-space: nowrap;
+  margin-left: 0.7rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.85);
+}
+@media (min-width: 640px) {
+  .hctrl {
+    bottom: 0.9rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .plate .slides .slide.on {
+    animation: none;
+  }
+}
+
+
+/* =====================================================================
+   TIMETABLES PAGE  (from the old timetables.html, redesigned)
+   Parts: colours | control panel | cards | week grid | details pop-up
+   COPY this whole block (to the end of the file) to reuse the timetable.
+   ===================================================================== */
+
+/* ---- colours of the three session types (used by cards, week boxes and legend) ----
+   --kc = box colour,  --kt = text colour on top of it                                */
+.k-Lecture,
+.k-Exam {
+  --kc: var(--brand);
+  --kt: #ffffff;
+}
+.k-Practical {
+  --kc: var(--brand-light);
+  --kt: #2a1608;
+}
+.k-Tutorial {
+  --kc: color-mix(in srgb, var(--ink) 80%, var(--background));
+  --kt: var(--on-ink);
+}
+
+/* ---- control panel: Lectures|Exams switch, view switch, search, filters ---- */
+.tt-panel {
+  margin-top: 2.5rem;
+  padding: 1.5rem;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+.tt-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  align-items: center;
+}
+/* the switches (.seg is made for dark pop-ups, so here it gets light colours) */
+.tt-seg {
+  flex: none;
+  background: var(--surface-card);
+  border: 1px solid var(--hairline);
+}
+.tt-seg button {
+  flex: none;
+  padding: 0.6rem 1.25rem;
+}
+.tt-seg button.on {
+  background: var(--ink);
+  color: var(--on-ink);
+}
+.tt-seg button:not(.on):hover {
+  background: var(--surface);
+}
+/* search box inside the panel */
+.tt-search {
+  flex: 1;
+  min-width: 14rem;
+  max-width: none;
+  margin-top: 0;
+}
+/* a labelled row of filter buttons */
+.tt-filter {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+.tt-filter .filters {
+  margin-top: 0;
+}
+.tt-lbl {
+  flex: none;
+  width: 4.5rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+/* the small number inside a Day button = how many lectures that day */
+.chip em {
+  font-style: normal;
+  opacity: 0.55;
+  margin-left: 0.2rem;
+  font-size: 0.72rem;
+}
+.chip.on em {
+  opacity: 0.8;
+}
+
+.tt-body {
+  margin-top: 2rem;
+}
+.tt-body .empty {
+  margin-top: 0;
+}
+.tt-note {
+  margin-top: 1.1rem;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+/* small coloured squares in the legend */
+.lg {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  margin: 0 0.35rem 0 0.9rem;
+  border-radius: 0.2rem;
+  background: var(--kc);
+  vertical-align: -0.05rem;
+}
+.tt-note .lg:first-child {
+  margin-left: 0;
+}
+
+/* ---- cards (Day list and Exams) ---- */
+.tt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+.tt-card {
+  position: relative;
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.25rem 1.5rem 1.25rem 1.6rem;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s;
+}
+/* coloured stripe on the left = session type */
+.tt-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0.35rem;
+  background: var(--kc);
+}
+.tt-card:hover {
+  transform: translateX(6px);
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--brand-deep) 14%, transparent);
+}
+.tt-time {
+  flex: none;
+  width: 4.75rem;
+  text-align: center;
+  align-self: flex-start;
+}
+.tt-time .d {
+  border-radius: 1rem;
+  background: var(--kc);
+  color: var(--kt);
+  padding: 0.75rem 0.25rem;
+}
+.tt-time .d b {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1;
+}
+.tt-time .d small {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.8;
+}
+.tt-time em {
+  display: block;
+  margin-top: 0.5rem;
+  font-style: normal;
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+}
+.tt-main {
+  flex: 1;
+  min-width: 0;
+}
+.tt-main h3 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  padding-right: 2.5rem;
+}
+.tt-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 0.6rem 1.5rem;
+  margin-top: 0.8rem;
+}
+.tt-meta dt {
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.tt-meta dd {
+  margin-top: 0.1rem;
+  font-size: 0.88rem;
+}
+.tt-cover {
+  margin-top: 0.8rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.tt-cover b {
+  font-weight: 500;
+  color: var(--ink);
+}
+.tt-card .del {
+  background: color-mix(in srgb, var(--brand-deep) 10%, transparent);
+  color: var(--ink);
+}
+.tt-card .del:hover {
+  color: #fff;
+}
+
+/* ---- WEEK GRID (Monday to Friday, hours going down) ---- */
+.wk-scroll {
+  overflow-x: auto;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--hairline);
+  background: var(--surface-card);
+}
+.wk {
+  min-width: 50rem;
+  --lab: 4rem; /* width of the time labels column */
+}
+.wk-head,
+.wk-body {
+  display: grid;
+  grid-template-columns: var(--lab) repeat(5, 1fr);
+}
+.wk-head {
+  background: var(--surface);
+  border-bottom: 1px solid var(--hairline);
+}
+.wk-head b {
+  padding: 0.9rem 0.5rem;
+  text-align: center;
+  font-weight: 500;
+  font-size: 0.85rem;
+  border-left: 1px solid var(--hairline);
+}
+.wk-head b small {
+  display: block;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--link);
+}
+.wk-head b.today {
+  color: var(--link);
+}
+/* the hour labels (8 AM, 9 AM ...) */
+.wk-times {
+  position: relative;
+  height: calc(var(--hours) * var(--hour));
+}
+.wk-times span {
+  position: absolute;
+  right: 0.6rem;
+  margin-top: 0.3rem;
+  font-size: 0.66rem;
+  color: var(--ink-soft);
+}
+/* one day column. The background draws a thin line at every hour. */
+.wk-col {
+  position: relative;
+  height: calc(var(--hours) * var(--hour));
+  border-left: 1px solid var(--hairline);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(var(--hour) - 1px),
+    var(--hairline) calc(var(--hour) - 1px),
+    var(--hairline) var(--hour)
+  );
+}
+.wk-col.today {
+  background-color: color-mix(in srgb, var(--brand-light) 9%, transparent);
+}
+/* a lecture box (its top and height are set by script.js from the start/end time) */
+.wk-ev {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.4rem 0.55rem;
+  overflow: hidden;
+  text-align: left;
+  font-size: 0.7rem;
+  line-height: 1.25;
+  border-radius: 0.65rem;
+  background: var(--kc);
+  color: var(--kt);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+.wk-ev:hover,
+.wk-ev:focus-visible {
+  transform: scale(1.03);
+  z-index: 4;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+}
+.wk-ev small {
+  font-size: 0.62rem;
+  opacity: 0.85;
+}
+.wk-ev b {
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+.wk-ev span {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.wk-ev em {
+  margin-top: auto;
+  font-style: normal;
+  font-size: 0.62rem;
+  opacity: 0.85;
+}
+/* one-hour boxes: code and title on a single line */
+.wk-ev.short {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.2rem 0.55rem;
+}
+.wk-ev.short small,
+.wk-ev.short em {
+  display: none;
+}
+.wk-ev.short span {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* a lecture that is happening right now */
+.wk-ev.live {
+  outline: 2px solid #e5484d;
+  outline-offset: 1px;
+}
+/* red line = the time right now (today's column only) */
+.wk-now {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  height: 2px;
+  background: #e5484d;
+  pointer-events: none;
+}
+.wk-now::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  top: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e5484d;
+}
+
+/* ---- details pop-up (the pop-up is dark glass, so lines are white) ---- */
+.tt-dl {
+  margin-top: 1.25rem;
+}
+.tt-dl > div {
+  display: flex;
+  gap: 1rem;
+  padding: 0.8rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+.tt-dl dt {
+  flex: none;
+  width: 6rem;
+  padding-top: 0.15rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+.tt-dl dd {
+  flex: 1;
+  line-height: 1.5;
+}
+
+/* ---- phones ---- */
+@media (max-width: 640px) {
+  .tt-panel {
+    padding: 1.1rem;
+  }
+  .tt-filter {
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 0;
+  }
+  /* on phones each row of filter buttons scrolls sideways instead of wrapping */
+  .tt-filter .filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    max-width: 100%;
+    padding-bottom: 0.3rem;
+    scrollbar-width: none;
+  }
+  .tt-filter .filters::-webkit-scrollbar {
+    display: none;
+  }
+  .tt-filter .chip {
+    flex: none;
+    white-space: nowrap;
+  }
+  .hctrl > span:not(.hnum) i {
+    width: 1.6rem;
+  }
+  .tt-card {
+    gap: 1rem;
+    padding: 1rem 1rem 1rem 1.2rem;
+  }
+  .tt-time {
+    width: 3.9rem;
+  }
+  .tt-main h3 {
+    font-size: 1.05rem;
+  }
+  .tt-dl dt {
+    width: 4.5rem;
+  }
+}
+
+
+/* =====================================================================
+   ADMIN PANEL FIX — no sideways scroll, only up/down
+   ===================================================================== */
+/* the tab buttons (News, Notice, Lecture, Exam, Look, Save) wrap onto two lines when there is no room */
+.panel .tabs {
+  flex-wrap: wrap;
+  border-radius: 1.4rem;
+}
+.panel .tabs button {
+  flex: 1 1 auto;
+}
+/* the "pick your own colour" card: let the text shrink instead of pushing the card wider */
+.custom {
+  min-width: 0;
+}
+.custom .ctext {
+  min-width: 0;
+}
+.custom code {
+  flex: none;
 }
