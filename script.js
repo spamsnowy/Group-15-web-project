@@ -679,9 +679,12 @@ function playIntro(page) {
 }
 function resetReveals(scope) {
   const els = $$(".rv,.rv-line", scope);
-  els.forEach((el) => {
+  els.forEach((el, index) => {
     io.unobserve(el);
     el.classList.remove("in");
+
+    // MODIFIED: a very small stagger makes cards/sections appear one after another.
+    el.style.transitionDelay = `${Math.min(index * 60, 240)}ms`;
   });
   requestAnimationFrame(() => els.forEach((el) => io.observe(el)));
 }
