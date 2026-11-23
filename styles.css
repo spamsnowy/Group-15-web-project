@@ -2993,3 +2993,286 @@ body {
 .custom code {
   flex: none;
 }
+
+
+/* =====================================================================
+   EXAM RESULTS PAGE
+   Parts: search box | result sheet | grade colours | grading scale | print
+   COPY this whole block (to the end of the file) to reuse the results page.
+   ===================================================================== */
+
+/* ---- search box ---- */
+.rs-lookup {
+  margin-top: 2.5rem;
+  padding: 1.5rem;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.rs-lookup label {
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.rs-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.6rem;
+}
+.rs-row input {
+  flex: 1;
+  min-width: 12rem;
+  padding: 0.95rem 1.4rem;
+  border-radius: 99px;
+  border: 1px solid var(--hairline);
+  background: var(--surface-card);
+  color: var(--ink);
+  font: inherit;
+  text-transform: uppercase;
+}
+.rs-row input::placeholder {
+  text-transform: none;
+}
+.rs-row input:focus {
+  outline: 2px solid var(--brand-light);
+  outline-offset: 2px;
+}
+.rs-hint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+.rs-hint span {
+  display: contents;
+}
+
+/* ---- result sheet ---- */
+#rsBody {
+  margin-top: 2rem;
+}
+#rsBody .empty {
+  margin-top: 0;
+}
+.rs-card {
+  padding: 1.75rem;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.rs-head {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+}
+.rs-head .av {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  font-size: 1.3rem;
+}
+.rs-head h2 {
+  font-size: 1.6rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.rs-head p {
+  margin-top: 0.2rem;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+/* four big numbers */
+.rs-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.9rem;
+  margin-top: 1.5rem;
+}
+.rs-stats > div {
+  padding: 1rem 1.2rem;
+  border-radius: 1.1rem;
+  background: var(--surface-card);
+  border: 1px solid var(--hairline);
+}
+.rs-stats dt {
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.rs-stats dd {
+  margin-top: 0.3rem;
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 1.1;
+}
+.rs-stats dd small {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+.rs-stats dd.good {
+  font-size: 1.35rem;
+  color: #2e8b57;
+}
+.rs-stats dd.bad {
+  font-size: 1.35rem;
+  color: #d23b40;
+}
+/* the marks table (scrolls sideways inside its own box on narrow screens) */
+.rs-scroll {
+  margin-top: 1.5rem;
+  overflow-x: auto;
+  border-radius: 1.1rem;
+  border: 1px solid var(--hairline);
+  background: var(--surface-card);
+}
+.rs-table {
+  width: 100%;
+  min-width: 34rem;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.rs-table th,
+.rs-table td {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--hairline);
+}
+.rs-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.rs-table th {
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  background: var(--surface);
+}
+.rs-table .n {
+  text-align: center;
+}
+/* grade badge: top (A range) gold, mid (B/C+) brand, low (C/C-/D+) grey, fail red */
+.grade {
+  display: inline-block;
+  min-width: 2.6rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 99px;
+  font-weight: 500;
+  font-size: 0.82rem;
+}
+.grade.top {
+  background: var(--brand-light);
+  color: #2a1608;
+}
+.grade.mid {
+  background: var(--brand);
+  color: #fff;
+}
+.grade.low {
+  background: color-mix(in srgb, var(--ink) 14%, transparent);
+  color: var(--ink);
+}
+.grade.fail {
+  background: #d23b40;
+  color: #fff;
+}
+.rs-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+.rs-note {
+  margin-top: 1rem;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
+/* ---- grading scale (on the dark section) ---- */
+.rs-scale {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 0.8rem;
+  margin-top: 2.5rem;
+}
+.rs-scale > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 1rem 1.2rem;
+  border-radius: 1.1rem;
+  background: var(--surface-card);
+  border: 1px solid var(--hairline);
+}
+.rs-scale b {
+  font-size: 1.6rem;
+  font-weight: 500;
+}
+.rs-scale span {
+  font-size: 0.85rem;
+}
+.rs-scale em {
+  font-style: normal;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+
+/* ---- admin form: the course rows ---- */
+.rs-crows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.rs-crow {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr 0.6fr 0.7fr;
+  gap: 0.5rem;
+}
+.rs-crow input {
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .rs-card {
+    padding: 1.2rem;
+  }
+  .rs-head h2 {
+    font-size: 1.3rem;
+  }
+  .rs-crow {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ---- printing: only the result sheet is printed (use "Save as PDF" to get a file) ---- */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #rsCard,
+  #rsCard * {
+    visibility: visible;
+  }
+  #rsCard {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: #fff;
+    color: #000;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .rs-actions {
+    display: none;
+  }
+}
