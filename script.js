@@ -8,7 +8,8 @@
    SECTION 2  NEWS LIST           add / edit news here
    SECTION 3  ANNOUNCEMENTS LIST  add / edit announcements here
    SECTION 4  TIMETABLE LIST      add / edit lectures and exams here
-   SECTION 5  ENGINE              the code that makes the site work (don't touch)
+   SECTION 5  EXAM RESULTS LIST   add / edit students' results and the grade table here
+   SECTION 6  ENGINE              the code that makes the site work (don't touch)
 
    HOW TO COPY / PASTE A PART:  every section starts with a big banner like the
    ones above and every block inside has its own small comment. Copy from one
@@ -92,7 +93,7 @@ const SETTINGS = {
 };
 
 /* The pages of the site. If you add a page in index.html, add its name here. */
-const PAGES = ["home", "news", "announcements", "timetables", "contact", "about"];
+const PAGES = ["home", "news", "announcements", "timetables", "results", "contact", "about"];
 
 /* =======================================================================
    SECTION 2 — NEWS LIST
@@ -348,12 +349,99 @@ const EXAMS = [
 ];
 
 /* =======================================================================
-   SECTION 5 — ENGINE
+   SECTION 5 — EXAM RESULTS LIST
+   -----------------------------------------------------------------------
+   One STU(...) line per student per semester. A visitor types an index
+   number on the Results page and sees these marks.
+
+   STUDENT LINE:
+     STU( index, name, faculty, year, semester, [ course, course, ... ] )
+       index     the student's index number, e.g. "SC/2022/014"
+       faculty   a number from the FACULTIES list (SECTION 4): 0 = Agriculture ...
+       year      1, 2, 3 or 4
+       semester  1 or 2
+     COURSE (one per subject, inside the [ ] ):
+       [ "code", "title", credits, marks ]
+       e.g.  ["SCI 3101", "Linear Algebra", 3, 82]
+       marks is a number from 0 to 100. The GRADE and the GPA are worked out
+       automatically from the GRADES table below, so you never type a grade.
+
+   !! ALL STUDENTS BELOW ARE MADE-UP SAMPLE DATA FOR THE DEMO !!
+   !! A real site must NOT put real students' marks in a file that anyone can
+      read. Real results need a server + a student login. This demo only
+      shows how the page works.
+   ======================================================================= */
+
+// Grade table: marks from this number up get this grade and grade points.
+// (Edit the numbers to match the university's real scale.)  Order: highest first.
+const GRADES = [
+  [85, "A+", 4.0],
+  [75, "A", 4.0],
+  [70, "A-", 3.7],
+  [65, "B+", 3.3],
+  [60, "B", 3.0],
+  [55, "B-", 2.7],
+  [50, "C+", 2.3],
+  [45, "C", 2.0],
+  [40, "C-", 1.7],
+  [35, "D+", 1.3],
+  [30, "D", 1.0],
+  [0, "E", 0.0],
+];
+const PASS_MARK = 40; // marks below this are a fail ("repeat")
+
+// turns one STU(...) line into an object (you don't need to edit this)
+const STU = (index, name, fac, year, sem, courses) => ({
+  index,
+  name,
+  fac,
+  year,
+  sem,
+  courses: courses.map(([code, title, credits, marks]) => ({ code, title, credits, marks })),
+});
+
+const RESULTS = [
+  STU("SC/2022/014", "Nimali Perera", 6, 3, 1, [
+    ["SCI 3101", "Linear Algebra", 3, 82],
+    ["SCI 3102", "Quantum Physics", 3, 71],
+    ["SCI 3103", "Organic Chemistry", 3, 64],
+    ["SCI 3104", "Statistics", 2, 58],
+    ["SCI 3105", "Research Methods", 2, 90],
+  ]),
+  STU("EN/2021/087", "Kasun Fernando", 1, 4, 1, [
+    ["ENG 4101", "Structural Design", 3, 68],
+    ["ENG 4102", "Project Management", 2, 76],
+    ["ENG 4103", "Thermodynamics", 3, 52],
+    ["ENG 4104", "Control Systems", 3, 38],
+    ["ENG 4105", "Final Year Project", 4, 74],
+  ]),
+  STU("AG/2023/032", "Tharushi Silva", 0, 2, 2, [
+    ["AGR 2201", "Soil Science", 3, 79],
+    ["AGR 2202", "Crop Science", 3, 85],
+    ["AGR 2203", "Animal Nutrition", 2, 66],
+    ["AGR 2204", "Farm Practical", 2, 91],
+  ]),
+  STU("MG/2022/051", "Dilan Jayasuriya", 4, 3, 1, [
+    ["MGT 3101", "Financial Accounting", 3, 73],
+    ["MGT 3102", "Marketing Management", 3, 61],
+    ["MGT 3103", "Business Law", 2, 47],
+    ["MGT 3104", "Entrepreneurship", 2, 88],
+  ]),
+  STU("MD/2023/021", "Ishara Wickramasinghe", 5, 2, 1, [
+    ["MED 2101", "Physiology", 4, 77],
+    ["MED 2102", "Biochemistry", 4, 69],
+    ["MED 2103", "Anatomy", 4, 81],
+  ]),
+  // ---- ADD YOUR NEW STU(...) LINES ABOVE THIS COMMENT ----
+];
+
+/* =======================================================================
+   SECTION 6 — ENGINE
    Everything below makes the site work. You normally don't need to edit it.
    Labels you can search for (Ctrl+F):
      [helpers]  [features on/off]  [saved data]  [colours]  [light/dark mode]
      [smooth scroll]  [pop-ups]  [login]  [admin panel]  [news + notices]
-     [ticker]  [search]  [hero slideshow]  [timetable]  [pages]
+     [ticker]  [search]  [hero slideshow]  [timetable]  [results]  [pages]
      [scroll tools]  [loading screen]  [start]
    ======================================================================= */
 
@@ -785,6 +873,7 @@ function openAdmin(tab = "news") {
     ["ann", "Notice"],
     ["lec", "Lecture"],
     ["exm", "Exam"],
+    ["res", "Result"],
     ["look", "Look"],
     ["export", "Save"],
   ];
@@ -792,6 +881,7 @@ function openAdmin(tab = "news") {
   let body = "";
   if (tab === "news" || tab === "ann") body = postFormHtml(tab === "news");
   else if (tab === "lec" || tab === "exm") body = ttFormHtml(tab === "lec");
+  else if (tab === "res") body = rsFormHtml();
   else if (tab === "look") body = lookTabHtml();
   else body = saveTabHtml();
 
@@ -806,6 +896,7 @@ function openAdmin(tab = "news") {
 
   if (tab === "news" || tab === "ann") bindPostForm(tab);
   if (tab === "lec" || tab === "exm") bindTTForm(tab === "lec");
+  if (tab === "res") bindRsForm();
   if (tab === "look") bindLookTab();
   if (tab === "export") bindSaveTab();
   openM("mAdmin");
@@ -985,7 +1076,7 @@ function bindLookTab() {
 
 /* --- tab: Save (code to copy into script.js) --- */
 function saveTabHtml() {
-  return `<p class="mini" style="margin-top:1.1rem">Things you add here are saved in <b>this browser only</b>. To keep them for everyone, copy the code below and paste it into <b>script.js</b>: news at the top of the <b>NEWS</b> list, notices at the top of <b>ANNOUNCEMENTS</b>, lectures and exams at the bottom of <b>LECTURES</b> / <b>EXAMS</b>. Then commit to git.</p>
+  return `<p class="mini" style="margin-top:1.1rem">Things you add here are saved in <b>this browser only</b>. To keep them for everyone, copy the code below and paste it into <b>script.js</b>: news at the top of the <b>NEWS</b> list, notices at the top of <b>ANNOUNCEMENTS</b>, lectures and exams at the bottom of <b>LECTURES</b> / <b>EXAMS</b>, results at the bottom of <b>RESULTS</b>. Then commit to git.</p>
     <textarea class="codebox" id="xCode" readonly rows="10">${esc(exportCode())}</textarea>
     <button class="pill solid" id="xCopy" style="margin-top:1rem;justify-content:center;width:100%">Copy code</button>`;
 }
@@ -1021,6 +1112,11 @@ function exportCode() {
   out += c.exams.length
     ? c.exams.map((x) => `  EXM("${x.date}", "${x.start}", "${x.end}", ${q(x.code)}, ${q(x.title)}, ${q(x.room)}, ${x.fac}, ${x.yr}, ${q(x.who)}, ${q(x.cover)}),`).join("\n") + "\n"
     : "// (no exams added in this browser)\n";
+  const rc = rsCustom();
+  out += "\n// ---- paste at the BOTTOM of the RESULTS list (SECTION 5) ----\n";
+  out += rc.length
+    ? rc.map((x) => `  STU(${q(x.index)}, ${q(x.name)}, ${x.fac}, ${x.year}, ${x.sem}, [${x.courses.map((k) => `[${q(k.code)}, ${q(k.title)}, ${k.credits}, ${k.marks}]`).join(", ")}]),`).join("\n") + "\n"
+    : "// (no results added in this browser)\n";
   out += `\n// ---- colours + mode: paste into SETTINGS ----\ntheme: { deep: "${theme.deep}", main: "${theme.main}", accent: "${theme.accent}" },\ndefaultMode: "${mode}",`;
   return out;
 }
@@ -1104,6 +1200,7 @@ function renderAll() {
       .join("") || NOTHING;
 
   renderTimetable();
+  renderResults();
   renderSlider(news.slice(0, 3));
   renderTicker(ann);
   $$(".rv").forEach((el) => io.observe(el));
@@ -1210,6 +1307,14 @@ function removeItem(kind, id) {
     toast("Entry deleted");
     return;
   }
+  if (kind === "rs") {
+    // a student's exam results
+    if (!confirm("Delete these exam results? (If they come from script.js they are only hidden in this browser.)")) return;
+    rsRemove(id);
+    renderResults();
+    toast("Results deleted");
+    return;
+  }
   if (!confirm("Delete this item? (If it comes from script.js it is only hidden in this browser.)"))
     return;
   const addedKey = kind === "news" ? "addedNews" : "addedAnn";
@@ -1244,6 +1349,7 @@ document.addEventListener("click", (e) => {
     else if (name === "admin-theme") openAdmin("look");
     else if (name === "admin-lecture") openAdmin("lec");
     else if (name === "admin-exam") openAdmin("exm");
+    else if (name === "admin-result") openAdmin("res");
     else if (name === "admin-save") openAdmin("export");
     else if (name === "top") scrollToTop();
     else if (name === "signin") store.session ? logout() : openAuth("login");
@@ -1703,6 +1809,176 @@ $("#ttQ")?.addEventListener("input", (e) => {
   renderTimetable();
 });
 
+/* ---------- [results] exam results page ----------
+   Parts: grade maths | saved entries | drawing the result | admin form | clicks
+   The visitor types an index number; we look it up in RESULTS (SECTION 5)
+   plus anything an admin added in the browser, then draw a result sheet.     */
+
+/* -- grade maths -- */
+const rsGrade = (marks) => GRADES.find(([min]) => marks >= min); // -> [min, "A", 4.0]
+const rsNorm = (text) => String(text).toUpperCase().replace(/\s+/g, ""); // "sc/2022/ 014" -> "SC/2022/014"
+// Adds up credits and grade points for one student.  GPA = sum(points x credits) / sum(credits)
+function rsCalc(s) {
+  let credits = 0;
+  let points = 0;
+  let earned = 0;
+  let passed = 0;
+  s.courses.forEach((c) => {
+    credits += c.credits;
+    points += rsGrade(c.marks)[2] * c.credits;
+    if (c.marks >= PASS_MARK) {
+      earned += c.credits;
+      passed++;
+    }
+  });
+  return { gpa: credits ? points / credits : 0, credits, earned, passed, total: s.courses.length };
+}
+
+/* -- saved entries: the list in SECTION 5 + what an admin added in the browser -- */
+const rsCustom = () => LS.get("ruh_results_custom", []);
+const rsHidden = () => LS.get("ruh_results_hidden", []);
+const rsAll = () => [...RESULTS, ...rsCustom()].filter((s) => !rsHidden().includes(s.index));
+const rs = { q: "" }; // the index number being shown (cleaned)
+
+/* -- draws the grading scale table at the bottom of the page -- */
+function renderScale() {
+  const box = $("#rsScale");
+  if (!box) return;
+  box.innerHTML = GRADES.map(([min, letter, pts], i) => {
+    const max = i ? GRADES[i - 1][0] - 1 : 100;
+    return `<div class="rv"><b>${letter}</b><span>${min}${i ? "–" + max : "+"} marks</span><em>${pts.toFixed(1)} points</em></div>`;
+  }).join("");
+}
+
+/* -- draws the result sheet (or a message) -- */
+function renderResults() {
+  const box = $("#rsBody");
+  if (!box) return;
+  // demo buttons: the first four sample index numbers
+  $("#rsChips").innerHTML = RESULTS.slice(0, 4).map((s) => `<button type="button" class="chip" data-rs="${esc(s.index)}">${esc(s.index)}</button>`).join("");
+
+  if (!rs.q) return void (box.innerHTML = '<div class="empty">Enter your index number above to see your results.</div>');
+  const s = rsAll().find((x) => rsNorm(x.index) === rs.q);
+  if (!s) return void (box.innerHTML = `<div class="empty">No results found for <b>${esc(rs.q)}</b>. Check the index number and try again.</div>`);
+
+  const t = rsCalc(s);
+  const fails = t.total - t.passed;
+  const rows = s.courses
+    .map((c) => {
+      const [, letter, pts] = rsGrade(c.marks);
+      const tier = c.marks >= PASS_MARK ? (pts >= 3.7 ? "top" : pts >= 2.3 ? "mid" : "low") : "fail";
+      return `<tr><td>${esc(c.code)}</td><td>${esc(c.title)}</td><td class="n">${c.credits}</td><td class="n">${c.marks}</td>
+        <td class="n"><span class="grade ${tier}">${letter}</span></td><td class="n">${pts.toFixed(1)}</td></tr>`;
+    })
+    .join("");
+  box.innerHTML = `<article class="rs-card rv" id="rsCard">
+    <header class="rs-head">
+      <span class="av">${esc(s.name[0] || "S").toUpperCase()}</span>
+      <div><h2>${esc(s.name)}</h2>
+        <p>${esc(s.index)} · ${esc(FACULTIES[s.fac])} · Year ${s.year} · Semester ${s.sem}</p></div>
+    </header>
+    <dl class="rs-stats">
+      <div><dt>Semester GPA</dt><dd>${t.gpa.toFixed(2)}</dd></div>
+      <div><dt>Credits earned</dt><dd>${t.earned}<small> / ${t.credits}</small></dd></div>
+      <div><dt>Courses passed</dt><dd>${t.passed}<small> / ${t.total}</small></dd></div>
+      <div><dt>Result</dt><dd class="${fails ? "bad" : "good"}">${fails ? "Repeat " + fails : "All passed"}</dd></div>
+    </dl>
+    <div class="rs-scroll"><table class="rs-table">
+      <thead><tr><th>Code</th><th>Course</th><th class="n">Credits</th><th class="n">Marks</th><th class="n">Grade</th><th class="n">Points</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>
+    <div class="rs-actions">
+      <button class="pill outline" type="button" data-print>Print / save as PDF</button>
+      ${isAdmin() ? `<button class="pill gold" type="button" data-del="rs:${esc(s.index)}">Delete these results</button>` : ""}
+    </div>
+    <p class="rs-note">Pass mark: ${PASS_MARK}. Grade points follow the scale below. Demo data only, not an official transcript.</p>
+  </article>`;
+  io.observe($("#rsCard"));
+}
+
+// Remove a student's results (admin). Entries from script.js are only hidden in this browser.
+function rsRemove(index) {
+  const c = rsCustom();
+  if (c.some((s) => s.index === index)) LS.set("ruh_results_custom", c.filter((s) => s.index !== index));
+  else LS.set("ruh_results_hidden", [...rsHidden(), index]);
+}
+
+/* -- ADMIN: the "Result" tab of the Admin panel (add one student) -- */
+function rsRowHtml() {
+  return `<div class="rs-crow">
+    <input class="rc-code" placeholder="SCI 3101" maxlength="20" aria-label="Course code">
+    <input class="rc-title" placeholder="Course title" maxlength="60" aria-label="Course title">
+    <input class="rc-cr" type="number" min="0.5" max="10" step="0.5" placeholder="Cr" aria-label="Credits">
+    <input class="rc-mk" type="number" min="0" max="100" step="1" placeholder="Marks" aria-label="Marks">
+  </div>`;
+}
+function rsFormHtml() {
+  const field = (id, label, input) => `<div class="field"><label for="${id}">${label}</label>${input}</div>`;
+  return `<form class="f" id="fRs" novalidate style="margin-top:1.25rem">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:1rem">
+      ${field("rfIndex", "Index number", '<input id="rfIndex" placeholder="SC/2022/014" maxlength="20">')}
+      ${field("rfName", "Student name", '<input id="rfName" placeholder="Full name" maxlength="60">')}
+      ${field("rfFac", "Faculty", `<select id="rfFac">${FACULTIES.map((n, i) => `<option value="${i}">${esc(n)}</option>`).join("")}</select>`)}
+      ${field("rfYear", "Year", '<select id="rfYear"><option>1</option><option>2</option><option>3</option><option>4</option></select>')}
+      ${field("rfSem", "Semester", '<select id="rfSem"><option>1</option><option>2</option></select>')}
+    </div>
+    <div class="field"><label>Courses (code, title, credits, marks)</label>
+      <div id="rfRows" class="rs-crows">${rsRowHtml().repeat(3)}</div>
+      <button class="pill outline" type="button" id="rfAdd" style="align-self:flex-start;color:#fff;margin-top:.5rem">+ Add course</button>
+    </div>
+    <div class="err" id="rfErr"></div>
+    <button class="pill solid" type="submit">Save results</button>
+  </form>`;
+}
+function bindRsForm() {
+  $("#rfAdd").onclick = () => $("#rfRows").insertAdjacentHTML("beforeend", rsRowHtml());
+  $("#fRs").onsubmit = (e) => {
+    e.preventDefault();
+    if (!isAdmin()) return;
+    const err = $("#rfErr");
+    const index = $("#rfIndex").value.trim().toUpperCase();
+    const name = $("#rfName").value.trim();
+    if (!index || !name) return void (err.textContent = "Enter the index number and the student name.");
+    if (rsAll().some((s) => rsNorm(s.index) === rsNorm(index))) return void (err.textContent = "This index number already has results. Delete them first.");
+    const courses = [];
+    for (const row of $$(".rs-crow", $("#rfRows"))) {
+      const v = (c) => $(c, row).value.trim();
+      if (!v(".rc-code") && !v(".rc-title") && !v(".rc-cr") && !v(".rc-mk")) continue; // empty row: skip
+      const credits = parseFloat(v(".rc-cr"));
+      const marks = parseFloat(v(".rc-mk"));
+      if (!v(".rc-code") || !v(".rc-title") || !(credits > 0) || !(marks >= 0 && marks <= 100))
+        return void (err.textContent = "Every course needs a code, a title, credits above 0 and marks from 0 to 100.");
+      courses.push({ code: v(".rc-code").toUpperCase(), title: v(".rc-title"), credits, marks });
+    }
+    if (!courses.length) return void (err.textContent = "Add at least one course.");
+    LS.set("ruh_results_custom", [...rsCustom(), { index, name, fac: +$("#rfFac").value, year: +$("#rfYear").value, sem: +$("#rfSem").value, courses }]);
+    rs.q = rsNorm(index);
+    $("#rsIndex").value = index;
+    closeM("mAdmin");
+    renderResults();
+    if (current !== "results") location.hash = "#/results";
+    toast("Results saved");
+  };
+  setTimeout(() => $("#rfIndex")?.focus(), 150);
+}
+
+/* -- clicks on the Results page -- */
+$("#fResult").addEventListener("submit", (e) => {
+  e.preventDefault();
+  rs.q = rsNorm($("#rsIndex").value);
+  renderResults();
+});
+$("#rsChips").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-rs]");
+  if (!b) return;
+  $("#rsIndex").value = b.dataset.rs;
+  rs.q = rsNorm(b.dataset.rs);
+  renderResults();
+});
+$("#rsBody").addEventListener("click", (e) => {
+  if (e.target.closest("[data-print]")) print(); // opens the browser print window (choose "Save as PDF")
+});
+renderScale();
+
 /* ---------- [pages] switching pages without reloading ---------- */
 const view = $("#view");
 const TITLES = {
@@ -1710,6 +1986,7 @@ const TITLES = {
   news: "News · University of Ruhuna",
   announcements: "Announcements · University of Ruhuna",
   timetables: "Timetables · University of Ruhuna",
+  results: "Exam Results · University of Ruhuna",
   contact: "Contact · University of Ruhuna",
   about: "About · University of Ruhuna",
 };

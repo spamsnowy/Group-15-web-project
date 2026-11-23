@@ -35,6 +35,7 @@
     PAGE: NEWS
     PAGE: ANNOUNCEMENTS
     PAGE: TIMETABLES      lectures + exams, day list and week grid
+    PAGE: RESULTS         exam results lookup by index number
     PAGE: CONTACT
     PAGE: ABOUT
     FOOTER
@@ -53,6 +54,7 @@
     News ............. PAGE: NEWS  + script.js  SECTION 2
     Announcements .... PAGE: ANNOUNCEMENTS + script.js SECTION 3
     Timetables ....... PAGE: TIMETABLES + script.js SECTION 4
+    Exam results ..... PAGE: RESULTS + script.js SECTION 5
     Contact / About .. PAGE: CONTACT / PAGE: ABOUT
 
   PHOTOS go in  Resource/images/  (see the README.txt in each folder)
@@ -91,6 +93,7 @@
     <a href="#/news" data-nav="news">News</a>
     <a href="#/announcements" data-nav="announcements">Announcements</a>
     <a href="#/timetables" data-nav="timetables">Timetables</a>
+    <a href="#/results" data-nav="results">Results</a>
   </nav>
 
   <!-- Logo + name (click = go Home) -->
@@ -165,10 +168,8 @@
   <div class="quick" data-feature="quickLinks">
     <a class="rv" href="http://www.ruh.ac.lk" target="_blank" rel="noopener"><span>Student portal<small>Your account</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     <a class="rv" href="http://www.ruh.ac.lk" target="_blank" rel="noopener" style="transition-delay:.08s"><span>Library<small>Books and journals</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-    <a class="rv" href="http://www.ruh.ac.lk" target="_blank" rel="noopener" style="transition-delay:.16s"><span>Exam results<small>Check your marks</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    <a class="rv" href="#/results" style="transition-delay:.16s"><span>Exam results<small>Check your marks</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     <a class="rv" href="#/timetables" style="transition-delay:.24s"><span>Timetables<small>Lectures and exams</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-    <a class="rv" href="exam-results.html" style="transition-delay:.16s"><span>Exam results<small>Check your marks</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a> 
-    <a class="rv" href="timetables.html" style="transition-delay:.24s"><span>Timetables<small>Lectures and exams</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
   </div>
   <!-- ==== END OPTIONAL: QUICK LINKS ==== -->
 
@@ -348,6 +349,58 @@
 
 
 <!-- #####################################################################
+     #####################  PAGE: RESULTS  START  ########################
+     Exam results lookup. The students come from the RESULTS list in
+     script.js (SECTION 5). This file only has the empty boxes; script.js
+     fills every box with an id="rs...".
+     ##################################################################### -->
+<section class="page" data-page="results">
+
+  <!-- Banner at the top. EDIT: photo, title, sentence -->
+  <section class="phero">
+    <div class="plate"><div class="inner" data-parallax><img src="Resource/images/bigthing/4.jpg" alt="" style="object-position:30% 60%"></div></div>
+    <span class="eyebrow light">Examinations</span>
+    <h1 class="words" data-words>Exam Results</h1>
+    <p>Enter your index number to see your marks, grades and semester GPA.</p>
+  </section>
+
+  <section class="s pad" style="background:var(--background);margin-top:.75rem">
+
+    <!-- ADMIN ONLY: add results / copy the code (visible after signing in as administrator) -->
+    <div class="adminbar" data-admin-only hidden>
+      <b>Administrator tools</b><span>Add a student's results, or delete them from the result sheet.</span><span class="sp"></span>
+      <button class="pill solid" type="button" data-act="admin-result">+ Add results</button>
+      <button class="pill outline" type="button" data-act="admin-save">Save code</button>
+    </div>
+
+    <!-- SEARCH BOX: the visitor types an index number here -->
+    <form class="rs-lookup rv" id="fResult" novalidate>
+      <label for="rsIndex">Index number</label>
+      <div class="rs-row">
+        <input id="rsIndex" placeholder="e.g. SC/2022/014" autocomplete="off" spellcheck="false">
+        <button class="pill solid" type="submit">View results</button>
+      </div>
+      <!-- DEMO HELPER: buttons with the sample index numbers (script.js fills them).
+           DELETE this paragraph when you use real data. -->
+      <p class="rs-hint">Demo index numbers: <span id="rsChips"></span></p>
+    </form>
+
+    <!-- The result sheet (or a message) appears here -->
+    <div id="rsBody"></div>
+  </section>
+
+  <!-- GRADING SCALE (built from the GRADES table in script.js) -->
+  <section class="s surface pad mt3">
+    <div class="rv"><span class="eyebrow">How grades work</span><h2 class="t">Grading scale</h2></div>
+    <div class="rs-scale" id="rsScale"></div>
+  </section>
+
+</section>
+<!-- #####################  PAGE: RESULTS  END  ########################## -->
+
+
+
+<!-- #####################################################################
      #######################  PAGE: CONTACT  START  ######################
      ##################################################################### -->
 <section class="page" data-page="contact">
@@ -462,6 +515,7 @@
       <div class="mq-set">
         <div class="mq-item"><span>University of Ruhuna</span><i class="mq-dot"></i></div>
         <div class="mq-item"><span>Stay informed</span><i class="mq-dot"></i></div>
+        <div class="mq-item"><span>Paññāya Narānaṃ Ratanaṃ</span><i class="mq-dot"></i></div>
         <div class="mq-item"><span>News &amp; announcements</span><i class="mq-dot"></i></div>
       </div>
     </div>
@@ -482,12 +536,12 @@
     <div>
       <div class="brand"><span class="logo" data-logo></span><span><b style="font-size:1.1rem">Ruhuna</b><small>University · Matara</small></span></div>
       <p class="blurb">The only university in Sri Lanka's southern region — news, notices and campus stories from the University of Ruhuna.</p>
-      <address><span>Wellamadama, Matara, Sri Lanka</span><a href="tel:+94412222681">+94-(41)-222-2681-2</a><a href="http://www.ruh.ac.lk" target="_blank" rel="noopener">www.ruh.ac.lk</a></address>
+      <address><span>Wellamadama, Matara, Sri Lanka</span><a href="tel:+94412222681">+94 (41) 222 2681-2</a><a href="http://www.ruh.ac.lk" target="_blank" rel="noopener">www.ruh.ac.lk</a></address>
     </div>
-    <nav><h4>Portal</h4><ul><li><a href="#/home">Home</a></li><li><a href="#/news">News</a></li><li><a href="#/announcements">Announcements</a></li><li><a href="#/timetables">Timetables</a></li></ul></nav>
+    <nav><h4>Portal</h4><ul><li><a href="#/home">Home</a></li><li><a href="#/news">News</a></li><li><a href="#/announcements">Announcements</a></li><li><a href="#/timetables">Timetables</a></li><li><a href="#/results">Results</a></li></ul></nav>
     <nav><h4>University</h4><ul><li><a href="#/about">About</a></li><li><a href="#/contact">Contact</a></li><li><a href="http://www.ruh.ac.lk" target="_blank" rel="noopener">Official site</a></li></ul></nav>
   </div>
-  <div class="bar"><span>© 2026 University of Ruhuna News Portal. Sample content for demonstration.</span></div>
+  <div class="bar"><span>© 2026 University of Ruhuna News Portal. Sample content for demonstration.</span><span>Paññāya Narānaṃ Ratanaṃ</span></div>
 </footer>
 </main>
 
@@ -509,8 +563,9 @@
       <a href="#/news" data-nav="news" style="transition-delay:.19s">News <small>02</small></a>
       <a href="#/announcements" data-nav="announcements" style="transition-delay:.26s">Announcements <small>03</small></a>
       <a href="#/timetables" data-nav="timetables" style="transition-delay:.33s">Timetables <small>04</small></a>
-      <a href="#/contact" data-nav="contact" style="transition-delay:.4s">Contact <small>05</small></a>
-      <a href="#/about" data-nav="about" style="transition-delay:.47s">About <small>06</small></a>
+      <a href="#/results" data-nav="results" style="transition-delay:.4s">Results <small>05</small></a>
+      <a href="#/contact" data-nav="contact" style="transition-delay:.47s">Contact <small>06</small></a>
+      <a href="#/about" data-nav="about" style="transition-delay:.54s">About <small>07</small></a>
     </nav>
     <!-- Sign in / user box (filled by script.js) -->
     <div class="foot" id="dfoot"></div>
