@@ -15,61 +15,7 @@
 </head>
 <body>
 
-<!--
-=======================================================================
-  UNIVERSITY OF RUHUNA NEWS PORTAL  —  READ ME FIRST
-  (Group 15 site + Ruhuna portal, merged into ONE of each file)
-=======================================================================
-  THE 3 FILES
-    index.html   (this file)  the TEXT of every page
-    styles.css                colours, sizes, animations
-    script.js                 settings, hero photos, news list, announcements list,
-                              timetable list, and the code that makes it all work
-
-  TABLE OF CONTENTS OF THIS FILE  (press Ctrl+F and paste the name)
-    LOADING SCREEN
-    TOP BAR
-    PAGE: HOME            hero photo slideshow, ticker, quick links, news, notices,
-                          faculties, numbers
-    PAGE: NEWS
-    PAGE: ANNOUNCEMENTS
-    PAGE: TIMETABLES      lectures + exams, day list and week grid
-    PAGE: RESULTS         exam results lookup by index number
-    PAGE: CONTACT
-    PAGE: ABOUT
-    FOOTER
-    RIGHT SLIDE MENU
-    POP-UPS
-    SCROLL TOOLS
-    SCRIPT LINK
-
-  HOW TO COPY / PASTE A PART
-    Every page and every block is wrapped in comments that say START and END.
-    Copy everything from START to END and paste it into the same place in
-    your own file. Nothing outside that block needs to change.
-
-  WHO EDITS WHAT (so git has no clashes)
-    Home ............. PAGE: HOME  + script.js  SECTION 1 (hero photos)
-    News ............. PAGE: NEWS  + script.js  SECTION 2
-    Announcements .... PAGE: ANNOUNCEMENTS + script.js SECTION 3
-    Timetables ....... PAGE: TIMETABLES + script.js SECTION 4
-    Exam results ..... PAGE: RESULTS + script.js SECTION 5
-    Contact / About .. PAGE: CONTACT / PAGE: ABOUT
-
-  PHOTOS go in  Resource/images/  (see the README.txt in each folder)
-    bigthing/       the big rectangle photos on the Home page (and page banners)
-    news/           news photos
-    announcement/   announcement photos
-    logo.png        the university logo
-=======================================================================
--->
-
-
-<!-- =====================================================================
-     LOADING SCREEN  (the first thing visitors see for ~1.5 seconds)
-     EDIT: the university name and the small text under it.
-     LOGO: put your logo file at  Resource/images/logo.png  (no code change)
-     ===================================================================== -->
+<!-- LOADING SCREEN -->
 <div id="loader" aria-hidden="true">
   <div class="loader-box">
     <span class="logo big" data-logo></span>          <!-- the logo picture -->
@@ -80,11 +26,7 @@
 </div>
 
 
-<!-- =====================================================================
-     TOP BAR  (menu links in the middle, logo, light/dark button, menu button)
-     EDIT: to add a page here, copy one <a> line. data-nav must match the
-     page name in PAGES (script.js).
-     ===================================================================== -->
+<!-- TOP BAR -->
 <header class="top" id="top">
   <!-- Links shown on big screens (other pages are in the right slide menu) -->
   <nav class="nav" aria-label="Primary">
@@ -110,9 +52,7 @@
 <div id="view">
 
 
-<!-- #####################################################################
-     ##########################  PAGE: HOME  START  ######################
-     ##################################################################### -->
+<!-- HOME  START   -->
 <section class="page" data-page="home">
 
   <section class="hero">
@@ -141,19 +81,16 @@
     <div class="hctrl" id="heroDots" aria-hidden="true"></div>
   </section>
 
-  <!-- ==== OPTIONAL FEATURE: QUICK LINKS (4 big buttons) ====
-       EDIT: change the names and put the real web address in each href="...".
-       The Timetables button opens the Timetables page of this site.
-       To remove: delete this block, or set features.quickLinks = false. -->
+  <!-- OPTIONAL FEATURE -->
   <div class="quick" data-feature="quickLinks">
     <a class="rv" href="http://scilms.ruh.ac.lk" target="_blank" rel="noopener"><span>Student portal<small>Your account</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     <a class="rv" href="https://opac.lib.ruh.ac.lk" target="_blank" rel="noopener" style="transition-delay:.08s"><span>Library<small>Books and journals</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     <a class="rv" href="#/results" style="transition-delay:.16s"><span>Exam results<small>Check your marks</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     <a class="rv" href="#/timetables" style="transition-delay:.24s"><span>Timetables<small>Lectures and exams</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
   </div>
-  <!-- ==== END OPTIONAL: QUICK LINKS ==== -->
 
-  <!-- ---------- HOME: LATEST NEWS (3 newest, comes from script.js NEWS list) ---------- -->
+
+  <!-- HOME: LATEST NEWS  -->
   <section class="s surface pad mt3" style="padding-top:5rem">
     <div class="rv"><span class="eyebrow">Latest news</span><h2 class="t">Fresh from<br>campus</h2></div>
     <!-- Only visible when an administrator is signed in -->
@@ -167,29 +104,28 @@
     <div style="margin-top:2.5rem"><a class="pill solid" href="#/news">All news <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
   </section>
 
-  <!-- ---------- HOME: ANNOUNCEMENTS (3 newest, comes from script.js ANNOUNCEMENTS list) ---------- -->
+  <!-- HOME: ANNOUNCEMENTS -->
   <section class="s pad" style="background:var(--background)">
     <div class="rv"><span class="eyebrow">Notice board</span><h2 class="t">Announcements</h2></div>
     <ul class="alist" id="homeAnn"></ul>   <!-- made automatically -->
     <div style="margin-top:2.5rem"><a class="pill outline" href="#/announcements">See all notices <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
   </section>
 
-  <!-- ---------- HOME: FACULTIES (EDIT: copy one <li> block to add a faculty) ----------
-       Text for Medicine and Science was written by the group (kept as it was). -->
+  <!-- HOME: FACULTIES  -->
   <section class="s pad surface mt3" style="padding-top:6rem">
     <div class="rv"><span class="eyebrow">Faculties</span><h2 class="t">Many fields,<br>one university</h2></div>
     <ul class="fl">
-      <li class="rv"><a class="frow" href="#/about"><span class="n">01</span><span class="m"><h3>Agriculture</h3><p>Crops, animal science, food and sustainable farming.</p></span><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
-      <li class="rv"><a class="frow" href="#/about"><span class="n">02</span><span class="m"><h3>Engineering</h3><p>Civil, electrical, mechanical and more, built at Hapugala.</p></span><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
-      <li class="rv"><a class="frow" href="#/about"><span class="n">03</span><span class="m"><h3>Fisheries &amp; Marine Sciences</h3><p>Ocean and coastal research on the southern shore.</p></span><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
-      <li class="rv"><a class="frow" href="#/about"><span class="n">04</span><span class="m"><h3>Humanities &amp; Social Sciences</h3><p>Languages, society, culture and public policy.</p></span><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
-      <li class="rv"><a class="frow" href="#/about"><span class="n">05</span><span class="m"><h3>Medicine</h3><p>Advancing healthcare, clinical studies, and medical sciences.</p></span><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
-      <li class="rv"><a class="frow" href="#/about"><span class="n">06</span><span class="m"><h3>Science</h3><p>Exploring mathematics, physics, chemistry, and modern laboratory research.</p></span><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
+      <li class="rv"><a class="frow" href="https://www.eng.ruh.ac.lk"><span class="n">01</span><span class="m"><h3>Engineering</h3><p>Civil, electrical, mechanical and more, built at Hapugala.</p></span><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
+      <li class="rv"><a class="frow" href="https://www.medi.ruh.ac.lk"><span class="n">02</span><span class="m"><h3>Medicine</h3><p>Advancing healthcare, clinical studies, and medical sciences.</p></span><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
+      <li class="rv"><a class="frow" href="https://www.sci.ruh.ac.lk/"><span class="n">03</span><span class="m"><h3>Science</h3><p>Exploring mathematics, physics, chemistry, and modern laboratory research.</p></span><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
+      <li class="rv"><a class="frow" href="https://agri.ruh.ac.lk"><span class="n">04</span><span class="m"><h3>Agriculture</h3><p>Crops, animal science, food and sustainable farming.</p></span><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
+      <li class="rv"><a class="frow" href="https://www.fmst.ruh.ac.lk"><span class="n">05</span><span class="m"><h3>Fisheries &amp; Marine Sciences</h3><p>Ocean and coastal research on the southern shore.</p></span><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
+      <li class="rv"><a class="frow" href="https://hss.ruh.ac.lk"><span class="n">06</span><span class="m"><h3>Humanities &amp; Social Sciences</h3><p>Languages, society, culture and public policy.</p></span><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
     </ul>
     <div style="margin-top:2.5rem"><a class="pill solid" href="#/about">About Ruhuna <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
   </section>
 
-  <!-- ---------- HOME: NUMBERS (EDIT: change the big numbers and labels) ---------- -->
+  <!-- HOME: NUMBERS  -->
   <section class="s dark pad mt3">
     <div class="rv"><span class="eyebrow light">By the numbers</span><h2 class="t">A university<br>that grows</h2></div>
     <dl class="stats">
@@ -201,15 +137,9 @@
   </section>
 
 </section>
-<!-- ##########################  PAGE: HOME  END  ######################## -->
 
 
-
-<!-- #####################################################################
-     ########################  PAGE: NEWS  START  ########################
-     The news cards are NOT written here. They come from the NEWS list in
-     script.js (section 2). Only the banner text is edited here.
-     ##################################################################### -->
+<!-- PAGE: NEWS   -->
 <section class="page" data-page="news">
 
   <!-- Banner at the top. EDIT: the photo (src), the title and the sentence -->
@@ -234,14 +164,10 @@
   </section>
 
 </section>
-<!-- ########################  PAGE: NEWS  END  ########################## -->
 
 
 
-<!-- #####################################################################
-     ##################  PAGE: ANNOUNCEMENTS  START  #####################
-     The notices come from the ANNOUNCEMENTS list in script.js (section 3).
-     ##################################################################### -->
+<!-- PAGE: ANNOUNCEMENTS -->
 <section class="page" data-page="announcements">
 
   <!-- Banner at the top. EDIT: photo, title, sentence -->
@@ -265,17 +191,8 @@
   </section>
 
 </section>
-<!-- ##################  PAGE: ANNOUNCEMENTS  END  ####################### -->
 
-
-
-<!-- #####################################################################
-     ####################  PAGE: TIMETABLES  START  ######################
-     (This page was timetables.html in the old Group 15 site.)
-     The lectures and exams are NOT written here. They come from the
-     TIMETABLE lists in script.js (SECTION 4). This file only has the empty
-     boxes; script.js fills every box that has an id="tt..." below.
-     ##################################################################### -->
+<!-- PAGE: TIMETABLES -->
 <section class="page" data-page="timetables">
 
   <!-- Banner at the top. EDIT: photo, title, sentence -->
@@ -324,16 +241,8 @@
   </section>
 
 </section>
-<!-- ####################  PAGE: TIMETABLES  END  ######################## -->
 
-
-
-<!-- #####################################################################
-     #####################  PAGE: RESULTS  START  ########################
-     Exam results lookup. The students come from the RESULTS list in
-     script.js (SECTION 5). This file only has the empty boxes; script.js
-     fills every box with an id="rs...".
-     ##################################################################### -->
+<!-- PAGE: RESULTS  -->
 <section class="page" data-page="results">
 
   <!-- Banner at the top. EDIT: photo, title, sentence -->
@@ -376,13 +285,8 @@
   </section>
 
 </section>
-<!-- #####################  PAGE: RESULTS  END  ########################## -->
 
-
-
-<!-- #####################################################################
-     #######################  PAGE: CONTACT  START  ######################
-     ##################################################################### -->
+<!-- PAGE: CONTACT   -->
 <section class="page" data-page="contact">
 
   <!-- Banner at the top. EDIT: photo, title, sentence -->
@@ -399,17 +303,15 @@
       <!-- CONTACT INFO  (EDIT: address, phone, fax, website) -->
       <div class="info rv">
         <div><small>Address</small><span>University of Ruhuna, Wellamadama, Matara, Sri Lanka</span></div>
-        <div><small>Telephone</small><a href="tel:+94412222681">+94 (41) 222 2681-2</a></div>
+        <div><small>Telephone</small><a href="tel:+94412222681">(+94) 41-2033250</a></div>
         <div><small>Fax</small><span>+94 (41) 222 2683</span></div>
         <div><small>Website</small><a href="http://www.ruh.ac.lk" target="_blank" rel="noopener">www.ruh.ac.lk</a></div>
-        <!-- To add an email, copy one line above, e.g.:
-             <div><small>Email</small><a href="mailto:someone@ruh.ac.lk">someone@ruh.ac.lk</a></div> -->
       </div>
 
       <!-- CONTACT FORM  (demo only: it does not send anything yet) -->
       <div class="rv" style="transition-delay:.12s" id="cWrap">
         <form class="f" id="fContact" novalidate>
-          <div class="field"><label for="cn">Full name</label><input id="cn" placeholder="Nimal Perera"></div>
+          <div class="field"><label for="cn">Full name</label><input id="cn" placeholder="User Name"></div>
           <div class="field"><label for="ce">Email</label><input id="ce" type="email" placeholder="you@email.com"></div>
           <div class="field"><label for="cm">Message</label><textarea id="cm" rows="5" placeholder="How can we help?"></textarea></div>
           <div class="err" id="cErr"></div>
@@ -421,13 +323,9 @@
   </section>
 
 </section>
-<!-- #######################  PAGE: CONTACT  END  ######################## -->
 
 
-
-<!-- #####################################################################
-     ########################  PAGE: ABOUT  START  #######################
-     ##################################################################### -->
+<!-- ABOUT -->
 <section class="page" data-page="about">
 
   <!-- Banner at the top. EDIT: photo, title, sentence -->
@@ -475,7 +373,7 @@
   </section>
 
 </section>
-<!-- ########################  PAGE: ABOUT  END  ######################### -->
+
 
 </div><!-- end #view -->
 
@@ -522,13 +420,13 @@
       <button class="xbtn" data-close="drawer" aria-label="Close menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
     <nav id="dnav">
-      <a href="#/home" data-nav="home" style="transition-delay:.12s">Home <small>01</small></a>
-      <a href="#/news" data-nav="news" style="transition-delay:.19s">News <small>02</small></a>
-      <a href="#/announcements" data-nav="announcements" style="transition-delay:.26s">Announcements <small>03</small></a>
-      <a href="#/timetables" data-nav="timetables" style="transition-delay:.33s">Timetables <small>04</small></a>
-      <a href="#/results" data-nav="results" style="transition-delay:.4s">Results <small>05</small></a>
-      <a href="#/contact" data-nav="contact" style="transition-delay:.47s">Contact <small>06</small></a>
-      <a href="#/about" data-nav="about" style="transition-delay:.54s">About <small>07</small></a>
+      <a href="#/home" data-nav="home" style="transition-delay:.12s">Home</a>
+      <a href="#/news" data-nav="news" style="transition-delay:.19s">News</a>
+      <a href="#/announcements" data-nav="announcements" style="transition-delay:.26s">Announcements</a>
+      <a href="#/timetables" data-nav="timetables" style="transition-delay:.33s">Timetables</a>
+      <a href="#/results" data-nav="results" style="transition-delay:.4s">Results</a>
+      <a href="#/contact" data-nav="contact" style="transition-delay:.47s">Contact</a>
+      <a href="#/about" data-nav="about" style="transition-delay:.54s">About</a>
     </nav>
     <!-- Sign in / user box (filled by script.js) -->
     <div class="foot" id="dfoot"></div>
