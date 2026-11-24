@@ -5,13 +5,13 @@ Topic: **University News Portal** – publishing university news, announcements 
 
 ## Team Members
 
-| Name | Student No. | GitHub | Role |
-|------|-------------|--------|------|
-| K.M.M.J. Kangarage | SC/CS/2025/15035 | [janithkangarage](https://github.com/janithkangarage) | Member |
-| A.S. Thilakarathna | CS/CS/2025/15038 | [spamsnowy](https://github.com/spamsnowy) | Team Leader |
-| G.A.N.D. Appuhamy | SC/CS/2025/15034 | [nemz-git](https://github.com/nemz-git) | Member |
-| M.P.J. Jithnuka | SC/CS/2025/15033 | [JanudaJithnuka](https://github.com/JanudaJithnuka) | Member |
-| E.G.J.M. Dewapriya | SC/CS/2025/15037 | [janithm06](https://github.com/janithm06) | Member |
+| Name | Student No. | GitHub |
+|------|-------------|--------|
+| A.S. Thilakarathna | CS/CS/2025/15038 | [spamsnowy](https://github.com/spamsnowy) |
+| E.G.J.M. Dewapriya | SC/CS/2025/15037 | [janithm06](https://github.com/janithm06) |
+| K.M.M.J. Kangarage | SC/CS/2025/15035 | [janithkangarage](https://github.com/janithkangarage) |
+| G.A.N.D. Appuhamy | SC/CS/2025/15034 | [nemz-git](https://github.com/nemz-git) |
+| M.P.J. Jithnuka | SC/CS/2025/15033 | [JanudaJithnuka](https://github.com/JanudaJithnuka) |
 
 
 ## Features
