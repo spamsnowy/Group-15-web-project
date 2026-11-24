@@ -34,10 +34,7 @@ Topic: **University News Portal** – publishing university news, announcements 
 
 ```
 Group-15-web-project/
-├── index.html        # Home page
-├── about.html        # About page
-├── services.html     # Main features page
-├── contact.html      # Contact page
+├── index.html        # Home page and all other pages
 ├── css/              # Stylesheets
 ├── js/               # Scripts
 ├── images/           # Images
