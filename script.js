@@ -64,7 +64,7 @@ const SETTINGS = {
 };
 
 /* The pages of the site. If you add a page in index.html, add its name here. */
-const PAGES = ["home", "news", "announcements", "timetables", "results", "contact", "about"];
+const PAGES = ["home", "news", "announcements", "faculties", "timetables", "results", "contact", "about"];
 
 /* =======================================================================
    SECTION 2 — NEWS LIST
@@ -1956,6 +1956,7 @@ const TITLES = {
   home: "University of Ruhuna — News Portal",
   news: "News · University of Ruhuna",
   announcements: "Announcements · University of Ruhuna",
+  faculties: "Faculties · University of Ruhuna",
   timetables: "Timetables · University of Ruhuna",
   results: "Exam Results · University of Ruhuna",
   contact: "Contact · University of Ruhuna",

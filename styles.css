@@ -3276,3 +3276,95 @@ body {
     display: none;
   }
 }
+
+/* =======================================================================
+   FACULTIES PAGE ...... photo cards (NEW, merged)
+   ======================================================================= */
+ul.fgrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  margin-top: 3rem;
+  list-style: none;
+  padding: 0;
+}
+@media (min-width: 640px) {
+  ul.fgrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1024px) {
+  ul.fgrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+ul.fgrid > li {
+  display: flex;
+}
+.fcard {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  overflow: hidden;
+  transition:
+    transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s;
+}
+.fcard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px color-mix(in srgb, var(--brand-deep) 12%, transparent);
+}
+.fc-im {
+  position: relative;
+  aspect-ratio: 16/10;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--brand), var(--brand-light));
+}
+.fc-im .ph {
+  transition:
+    transform 0.6s,
+    opacity 0.5s;
+}
+.fc-im .ph.alt2 {
+  opacity: 0;
+}
+.fcard:hover .fc-im .ph {
+  transform: scale(1.05);
+}
+.fcard:hover .fc-im .ph.alt2 {
+  opacity: 1;
+}
+.fc-none {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  background: linear-gradient(135deg, var(--brand-deep), var(--brand));
+}
+.fc-bd {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.fc-bd .n {
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  color: var(--link);
+}
+.fc-bd h3 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+.fc-bd p {
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
